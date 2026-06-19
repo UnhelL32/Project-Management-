@@ -621,6 +621,7 @@
 </div>
 
 <script>
+    // Local memory sync initialization parameters
     let database = [];
     try {
         const rawLocalData = localStorage.getItem('wizard_diary_data_v4_execution');
@@ -661,6 +662,7 @@
         document.getElementById('theme-toggle-btn').innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
     }
 
+    // --- MANUAL BACKUP FILE UTILITIES ---
     function exportDataToJSON() {
         if(database.length === 0) return alert("No active data entries to backup.");
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
@@ -785,7 +787,7 @@
             if(database.some(p => p.id.toLowerCase() === id.toLowerCase())) {
                 return alert("Primary Key Conflict: This Project ID already exists.");
             }
-            let targetObj = { id, fy, name, details, metaLinks: links, plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[], executions:[] };
+            let targetObj = { id, fy, projectName: name, details, metaLinks: links, plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[], executions:[] };
             database.push(targetObj);
             currentWorkingProjId = id;
             isEditingExistingMode = true; 
@@ -793,7 +795,7 @@
             let idx = database.findIndex(p => p.id === currentWorkingProjId);
             if(idx !== -1) {
                 database[idx].fy = fy;
-                database[idx].name = name;
+                database[idx].projectName = name;
                 database[idx].details = details;
                 database[idx].metaLinks = links;
             }
@@ -807,7 +809,7 @@
     }
 
     function commitP2Log() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         const d = document.getElementById('p2-date').value;
         if(!d) return alert("Select an entry log target date.");
 
@@ -830,7 +832,7 @@
     }
 
     function commitP3Log() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         const d = document.getElementById('p3-date').value;
         if(!d) return alert("Select an entry log target date.");
 
@@ -848,7 +850,7 @@
     }
 
     function commitP4Log() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         const d = document.getElementById('p4-date').value;
         if(!d) return alert("Select an entry log target date.");
 
@@ -868,7 +870,7 @@
     }
 
     function commitP5Log() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         const d = document.getElementById('p5-date').value;
         if(!d) return alert("Select an entry log target date.");
 
@@ -889,7 +891,7 @@
     }
 
     function commitP6Log() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         const d = document.getElementById('p6-date').value;
         if(!d) return alert("Select a work execution entry date.");
 
@@ -909,7 +911,7 @@
     }
 
     function renderSubTablesPage2() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         let html = `<h4>Current Operational Logs:</h4>`;
         html += `<table class="db-table"><tr><th>Type</th><th>Date</th><th>Logged Value</th><th>Action</th></tr>`;
         p.plans.forEach(r => html += `<tr><td>Plan</td><td>${r.date}</td><td>${r.text} ${buildGDriveHtmlBadges(r.attachments)}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('plans','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
@@ -921,7 +923,7 @@
     }
 
     function renderSubTablesPage3() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         let html = `<table class="db-table"><tr><th>Date</th><th>Draft Layout</th><th>Note sent</th><th>Action</th></tr>`;
         p.layouts.forEach(r => html += `<tr><td>${r.date}</td><td>${r.draft} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.note}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('layouts','${r.id}','view-wizard-p3')">&times;</button></td></tr>`);
         html += `</table>`;
@@ -930,7 +932,7 @@
     }
 
     function renderSubTablesPage4() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         let html = `<table class="db-table"><tr><th>Date</th><th>Type</th><th>Decision</th><th>Received Date</th><th>Amount</th><th>Action</th></tr>`;
         p.budgets.forEach(r => html += `<tr><td>${r.date}</td><td>${r.type}</td><td>${r.decision} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.recDate}</td><td>${Number(r.amount).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('budgets','${r.id}','view-wizard-p4')">&times;</button></td></tr>`);
         html += `</table>`;
@@ -939,7 +941,7 @@
     }
 
     function renderSubTablesPage5() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         let html = `<table class="db-table"><tr><th>Date</th><th>Tender ID</th><th>Info / APP</th><th>Approved Date</th><th>Winner / Bidder</th><th>Value</th><th>Action</th></tr>`;
         p.tenders.forEach(r => html += `<tr><td>${r.date}</td><td><code>${r.tenderId}</code></td><td>${r.appInfo} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.appDate || 'N/A'}</td><td><strong>${r.bidder || 'N/A'}</strong></td><td>${Number(r.value).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('tenders','${r.id}','view-wizard-p5')">&times;</button></td></tr>`);
         html += `</table>`;
@@ -948,7 +950,7 @@
     }
 
     function renderSubTablesPage6() {
-        const p = database.find(proj => proj.id === currentWorkingProjId);
+        const p = getCurrentProjectRef();
         let html = `<table class="db-table"><tr><th>Date</th><th>Component</th><th>Progress Achievements</th><th>% Complete</th><th>Remarks</th><th>Action</th></tr>`;
         p.executions.forEach(r => html += `<tr><td>${r.date}</td><td><strong>${r.component}</strong></td><td>${r.progress} ${buildGDriveHtmlBadges(r.attachments)}</td><td><strong>${r.percent}%</strong></td><td><i>${r.remarks || 'None'}</i></td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('executions','${r.id}','view-wizard-p6')">&times;</button></td></tr>`);
         html += `</table>`;
@@ -973,7 +975,7 @@
         document.getElementById('w-projId').disabled = true;
         document.getElementById('w-projId').value = p.id;
         document.getElementById('w-projFy').value = p.fy;
-        document.getElementById('w-projName').value = p.name;
+        document.getElementById('w-projName').value = p.projectName;
         document.getElementById('w-projDetails').value = p.details || '';
 
         const listContainer = document.getElementById('p1-links-list');
@@ -1005,7 +1007,7 @@
             <div style="background: var(--bg-color); padding: 20px; border-radius: var(--radius-lg); margin-bottom: 25px; border-left:5px solid var(--accent);">
                 <p style="margin: 0 0 8px 0; font-size:1.05rem;"><strong>Financial Year (FY):</strong> ${p.fy}</p>
                 <p style="margin: 0 0 8px 0; font-size:1.05rem;"><strong>Project ID:</strong> ${p.id}</p>
-                <p style="margin: 0 0 8px 0; font-size:1.05rem;"><strong>Name of Project:</strong> ${p.name}</p>
+                <p style="margin: 0 0 8px 0; font-size:1.05rem;"><strong>Name of Project:</strong> ${p.projectName}</p>
                 <p style="margin: 0 0 12px 0; font-size:1.05rem;"><strong>Baseline Scope parameters:</strong> ${p.details || 'N/A'}</p>
                 ${p.metaLinks && p.metaLinks.length > 0 ? `<p style="margin:0;"><strong>Master Blueprints Archive:</strong> ${buildGDriveHtmlBadges(p.metaLinks)}</p>` : ''}
             </div>
@@ -1058,7 +1060,7 @@
                 </table></div>
             `}
 
-            <div class="detail-section-title" style="color:var(--execution); border-left-color:var(--execution);">7. Physical Work Execution Phase Ledger</div>
+            <div class="detail-section-title">7. Physical Work Execution Phase Ledger</div>
             ${(!p.executions || p.executions.length === 0) ? '<p style="color:var(--text-muted); padding-left:15px;">No field construction milestones logged.</p>' : `
                 <div class="table-responsive"><table class="db-table">
                     <thead>
@@ -1115,7 +1117,7 @@
                         <div class="project-meta-info">
                             <strong>FY:</strong> ${p.fy} | 
                             <strong>ID:</strong> <code>${p.id}</code> | 
-                            <strong>Name:</strong> <span style="font-weight:700; color:var(--text-main); margin-left:4px;">${p.name}</span>
+                            <strong>Name:</strong> <span style="font-weight:700; color:var(--text-main); margin-left:4px;">${p.projectName}</span>
                         </div>
                         <div class="btn-group">
                             <button class="btn btn-sm btn-success" onclick="showFullDetailsPage('${p.id}')">See Full Details</button>
@@ -1128,6 +1130,36 @@
             });
             out.appendChild(section);
         });
+    }
+
+    // --- REWRITTEN BULLETPROOF EXPORT MAPPING LOGIC MATRIX ---
+    function exportDataToCSV() {
+        if(database.length === 0) return alert("No data to export.");
+        let csvRows = [];
+        // Fixed alignment tokens
+        csvRows.push("RecordType,ProjectID,FY,ProjectName,Details,Date,Field1,Field2,Field3,Field4,Field5,Field6");
+
+        database.forEach(p => {
+            // Corrected p.name tracking error wrapper key path context
+            csvRows.push(`METADATA,"${p.id}","${p.fy}","${(p.projectName || '').replace(/"/g, '""')}","${(p.details || '').replace(/"/g, '""')}",,,,,,,`);
+            if(p.metaLinks) p.metaLinks.forEach(l => csvRows.push(`GDRIVE_META,"${p.id}",,,,"${l.name}","${l.link}",,,,,`));
+            if(p.plans) p.plans.forEach(l => csvRows.push(`PLAN,"${p.id}",,,,"${l.date}","${l.text.replace(/"/g, '""')}",,,,,`));
+            if(p.decisions) p.decisions.forEach(l => csvRows.push(`DECISION,"${p.id}",,,,"${l.date}","${l.decision.replace(/"/g, '""')}","${l.work.replace(/"/g, '""')}",,,,`));
+            if(p.problems) p.problems.forEach(l => csvRows.push(`PROBLEM,"${p.id}",,,,"${l.date}","${l.problem.replace(/"/g, '""')}","${l.discussed.replace(/"/g, '""')}","${l.implemented.replace(/"/g, '""')}",,,`));
+            if(p.layouts) p.layouts.forEach(l => csvRows.push(`LAYOUT,"${p.id}",,,,"${l.date}","${l.draft.replace(/"/g, '""')}","${l.note.replace(/"/g, '""')}",,,,`));
+            if(p.budgets) p.budgets.forEach(l => csvRows.push(`BUDGET,"${p.id}",,,,"${l.date}","${l.type}","${l.decision.replace(/"/g, '""')}","${l.recDate}","${l.amount}",,`));
+            if(p.tenders) p.tenders.forEach(l => csvRows.push(`TENDER,"${p.id}",,,,"${l.date}","${l.tenderId}","${l.appInfo.replace(/"/g, '""')}","${l.appDate}","${(l.bidder || '').replace(/"/g, '""')}","${l.value}"`));
+            if(p.executions) p.executions.forEach(l => csvRows.push(`EXECUTION,"${p.id}",,,,"${l.date}","${l.component.replace(/"/g, '""')}","${l.progress.replace(/"/g, '""')}","${l.percent}","${l.remarks.replace(/"/g, '""')}",`));
+        });
+
+        // Safe browser data string assembly down-streams
+        const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csvRows.join("\n"));
+        const link = document.createElement("a");
+        link.setAttribute("href", csvContent);
+        link.setAttribute("download", `Project_Diary_Master_Export_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     function clearPageFormFields() {
