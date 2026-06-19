@@ -415,7 +415,7 @@
             <textarea id="p2-decision" placeholder="Resolutions or parameters chosen..."></textarea>
             <div class="sub-box">
                 <label>Datewise Work Executed As Per Decision</label>
-                <textarea id="w-work" placeholder="Sub-part: Work completed on site..."></textarea>
+                <textarea id="p2-work" placeholder="Sub-part: Work completed on site..."></textarea>
             </div>
 
             <label>Datewise Problem Faced</label>
@@ -661,7 +661,6 @@
         document.getElementById('theme-toggle-btn').innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
     }
 
-    // --- STREAMLINED LOCAL DEVICE GOOGLE DRIVE SYNC SHORTCUT ENGINE ---
     function exportDataToJSON() {
         if(database.length === 0) return alert("No active data entries to backup.");
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
@@ -670,7 +669,7 @@
         downloadAnchor.setAttribute("download", `Project_Diary_Backup_${new Date().toISOString().slice(0,10)}.json`);
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
-        downloadAnchor.removeChild(downloadAnchor);
+        document.body.removeChild(downloadAnchor);
     }
 
     function importDataFromJSON(event) {
@@ -682,7 +681,7 @@
             try {
                 const parsedData = JSON.parse(e.target.result);
                 if(Array.isArray(parsedData)) {
-                    if(confirm(`Successfully verified backup file. Do you want to overwrite your local app history?`)) {
+                    if(confirm("Successfully verified backup file. Do you want to overwrite your local app history?")) {
                         database = parsedData;
                         syncMemory();
                         renderMasterDatabase();
@@ -803,6 +802,10 @@
         switchView('view-wizard-p2');
     }
 
+    function getCurrentProjectRef() {
+        return database.find(p => p.id === currentWorkingProjId);
+    }
+
     function commitP2Log() {
         const p = database.find(proj => proj.id === currentWorkingProjId);
         const d = document.getElementById('p2-date').value;
@@ -811,7 +814,7 @@
         const links = collectDriveLinksFromContainer('p2-links-list');
         const planText = document.getElementById('p2-plan').value;
         const decText = document.getElementById('p2-decision').value;
-        const workText = document.getElementById('w-work').value;
+        const workText = document.getElementById('p2-work').value;
         const probText = document.getElementById('p2-problem').value;
         const discText = document.getElementById('p2-solDisc').value;
         const implText = document.getElementById('p2-solImpl').value;
@@ -953,6 +956,45 @@
         if(container) container.innerHTML = p.executions.length === 0 ? "" : html;
     }
 
+    function removeSubRow(arrayName, rowId, pageViewRefresh) {
+        if(confirm("Erase entry row context?")) {
+            const p = database.find(proj => proj.id === currentWorkingProjId);
+            p[arrayName] = p[arrayName].filter(r => r.id !== rowId);
+            syncMemory();
+            switchView(pageViewRefresh);
+        }
+    }
+
+    function editEntireProjectRoute(id) {
+        currentWorkingProjId = id;
+        isEditingExistingMode = true;
+        const p = database.find(proj => proj.id === id);
+
+        document.getElementById('w-projId').disabled = true;
+        document.getElementById('w-projId').value = p.id;
+        document.getElementById('w-projFy').value = p.fy;
+        document.getElementById('w-projName').value = p.name;
+        document.getElementById('w-projDetails').value = p.details || '';
+
+        const listContainer = document.getElementById('p1-links-list');
+        if(listContainer) {
+            listContainer.innerHTML = "";
+            if(p.metaLinks) {
+                p.metaLinks.forEach(l => addNewDriveLinkInputRow('p1-links-list', l.link, l.name));
+            }
+        }
+
+        switchView('view-wizard-p1');
+    }
+
+    function deleteEntireProject(id) {
+        if(confirm("Completely wipe this structural dataset record from storage?")) {
+            database = database.filter(p => p.id !== id);
+            syncMemory();
+            renderMasterDatabase();
+        }
+    }
+
     function showFullDetailsPage(id) {
         const p = database.find(proj => proj.id === id);
         if(!p) return;
@@ -1086,33 +1128,6 @@
             });
             out.appendChild(section);
         });
-    }
-
-    function exportDataToCSV() {
-        if(database.length === 0) return alert("No data to export.");
-        let csvRows = [];
-        csvRows.push("RecordType,ProjectID,FY,ProjectName,Details,Date,Field1,Field2,Field3,Field4,Field5,Field6");
-
-        database.forEach(p => {
-            csvRows.push(`METADATA,"${p.id}","${p.fy}","${p.name.replace(/"/g, '""')}","${(p.details || '').replace(/"/g, '""')}",,,,,,,`);
-            if(p.metaLinks) p.metaLinks.forEach(l => csvRows.push(`GDRIVE_META,"${p.id}",,,,"${l.name}","${l.link}",,,,,`));
-            if(p.plans) p.plans.forEach(l => csvRows.push(`PLAN,"${p.id}",,,,"${l.date}","${l.text.replace(/"/g, '""')}",,,,,`));
-            if(p.decisions) p.decisions.forEach(l => csvRows.push(`DECISION,"${p.id}",,,,"${l.date}","${l.decision.replace(/"/g, '""')}","${l.work.replace(/"/g, '""')}",,,,`));
-            if(p.problems) p.problems.forEach(l => csvRows.push(`PROBLEM,"${p.id}",,,,"${l.date}","${l.problem.replace(/"/g, '""')}","${l.discussed.replace(/"/g, '""')}","${l.implemented.replace(/"/g, '""')}",,,`));
-            if(p.layouts) p.layouts.forEach(l => csvRows.push(`LAYOUT,"${p.id}",,,,"${l.date}","${l.draft.replace(/"/g, '""')}","${l.note.replace(/"/g, '""')}",,,,`));
-            if(p.budgets) p.budgets.forEach(l => csvRows.push(`BUDGET,"${p.id}",,,,"${l.date}","${l.type}","${l.decision.replace(/"/g, '""')}","${l.recDate}","${l.amount}",,`));
-            if(p.tenders) p.tenders.forEach(l => csvRows.push(`TENDER,"${p.id}",,,,"${l.date}","${l.tenderId}","${l.appInfo.replace(/"/g, '""')}","${l.appDate}","${(l.bidder || '').replace(/"/g, '""')}","${l.value}"`));
-            if(p.executions) p.executions.forEach(l => csvRows.push(`EXECUTION,"${p.id}",,,,"${l.date}","${l.component.replace(/"/g, '""')}","${l.progress.replace(/"/g, '""')}","${l.percent}","${l.remarks.replace(/"/g, '""')}",`));
-        });
-
-        const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Project_Diary_Master_Export.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
     }
 
     function clearPageFormFields() {
