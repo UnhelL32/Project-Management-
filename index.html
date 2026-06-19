@@ -6,60 +6,103 @@
     <title>Project Diary Matrix - Minhaj Civil IUT 10</title>
     <style>
         :root {
-            --bg-color: #f7fafc;
+            --bg-color: #f0f4f8;
             --card-bg: #ffffff;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --accent: #1a365d;
-            --accent-light: #2b6cb0;
-            --border-color: #cbd5e0;
-            --danger: #c53030;
-            --success: #2f855a;
-            --warning: #dd6b20;
-            --execution: #6b46c1;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            --success: #10b981;
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            --warning: #f59e0b;
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            --execution: #8b5cf6;
+            --execution-gradient: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            --radius-lg: 12px;
+            --radius-md: 8px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.dark-theme {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.5;
             margin: 0;
             padding: 15px;
+            transition: background-color var(--transition), color var(--transition);
         }
 
         .container { max-width: 1100px; margin: 0 auto; }
         
         header {
             text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--accent);
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+            position: relative;
+            transition: background-color var(--transition), border-color var(--transition);
         }
-        header h1 { margin: 0; color: var(--accent); font-size: 1.8rem; }
-        header p { margin: 5px 0 0; color: var(--text-muted); font-weight: bold; }
+        header h1 { 
+            margin: 0; 
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem; 
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            padding-right: 120px;
+        }
+        header p { margin: 8px 0 0; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; }
 
-        .app-view { display: none; }
+        @media (max-width: 600px) {
+            header h1 { padding-right: 0; font-size: 1.8rem; }
+            header { padding-top: 60px; }
+        }
+
+        .app-view { display: none; animation: fadeIn 0.3s ease; }
         .app-view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .box {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: var(--radius-lg);
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+            transition: background-color var(--transition), border-color var(--transition);
         }
 
         .box-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
             margin-top: 0;
             margin-bottom: 20px;
             text-transform: uppercase;
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 8px;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .wizard-progress {
@@ -68,9 +111,10 @@
             gap: 6px;
             justify-content: space-between;
             margin-bottom: 25px;
-            background: #edf2f7;
+            background: var(--border-color);
             padding: 8px;
             border-radius: 8px;
+            transition: background-color var(--transition);
         }
         
         .wizard-step {
@@ -81,19 +125,20 @@
             text-transform: uppercase;
             text-align: center;
             padding: 10px 4px;
-            background: #ffffff;
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
+            transition: var(--transition);
         }
 
         .wizard-step.current {
             color: #ffffff;
-            background: var(--accent-light);
-            border-color: var(--accent-light);
+            background: var(--accent-gradient);
+            border-color: var(--accent);
         }
 
         @media (max-width: 768px) {
@@ -105,12 +150,14 @@
         }
 
         .sub-box {
-            border-left: 3px solid var(--accent-light);
+            border-left: 4px solid var(--accent);
             padding-left: 15px;
             margin: 15px 0;
-            background: #f8fafc;
+            background: var(--bg-color);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
             padding-top: 10px;
             padding-bottom: 10px;
+            transition: background-color var(--transition), border-color var(--transition);
         }
 
         label {
@@ -126,11 +173,20 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
             font-size: 0.95rem;
+            font-weight: 500;
             box-sizing: border-box;
-            background: #fafafa;
+            background: var(--bg-color);
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+        input:focus, textarea:focus, select:focus {
+            background: var(--card-bg);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            outline: none;
         }
         textarea { min-height: 80px; resize: vertical; }
 
@@ -146,50 +202,61 @@
         .btn {
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
-            font-weight: 600;
+            border-radius: var(--radius-md);
+            font-weight: 700;
             font-size: 0.9rem;
             cursor: pointer;
             color: #fff;
-            background-color: var(--accent-light);
+            background: var(--accent-gradient);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            transition: var(--transition);
         }
-        .btn:hover { opacity: 0.9; }
-        .btn-danger { background-color: var(--danger); }
-        .btn-success { background-color: var(--success); }
-        .btn-secondary { background-color: #718096; }
-        .btn-execution { background-color: var(--execution); }
-        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
-        .btn-block { width: 100%; padding: 12px; font-size: 1rem; }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            opacity: 0.95;
+        }
+        .btn:active { transform: translateY(0); }
+        .btn-danger { background: var(--danger-gradient); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+        .btn-success { background: var(--success-gradient); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+        .btn-secondary { background: #64748b; box-shadow: 0 4px 10px rgba(100, 116, 139, 0.2); }
+        .btn-execution { background: var(--execution-gradient); box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2); }
+        .btn-gdrive { background: linear-gradient(135deg, #34a853 0%, #4285f4 100%); box-shadow: 0 4px 10px rgba(66, 133, 244, 0.2); }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; box-shadow: none !important; }
+        .btn-block { width: 100%; padding: 12px; font-size: 1rem; border-radius: var(--radius-lg); }
 
         .year-header {
-            background: var(--accent);
-            color: #fff;
+            background: var(--text-main);
+            color: var(--card-bg);
             padding: 10px 15px;
             font-size: 1.25rem;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: var(--radius-md);
             margin-top: 30px;
+            transition: background-color var(--transition), color var(--transition);
         }
         .project-card {
             border: 1px solid var(--border-color);
-            background: #fff;
+            background: var(--card-bg);
             margin-top: 15px;
             border-radius: 6px;
             overflow: hidden;
+            transition: background-color var(--transition), border-color var(--transition);
         }
         .project-summary {
             padding: 15px;
-            background: #edf2f7;
+            background: var(--bg-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
+            transition: background-color var(--transition);
         }
         .project-meta-info { font-size: 0.95rem; }
+        .project-meta-info code { background: var(--border-color); padding: 2px 6px; border-radius: 4px; color: var(--accent); transition: var(--transition); }
         .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
         
         .db-table {
@@ -199,23 +266,26 @@
             font-size: 0.85rem;
         }
         .db-table th {
-            background: #e2e8f0;
+            background: var(--bg-color);
             color: var(--text-main);
             text-align: left;
             padding: 8px 10px;
             border: 1px solid var(--border-color);
+            transition: background-color var(--transition), border-color var(--transition), color var(--transition);
         }
-        .db-table td { padding: 8px 10px; border: 1px solid var(--border-color); vertical-align: top; }
-        .db-table tr:nth-child(even) { background: #f7fafc; }
+        .db-table td { padding: 8px 10px; border: 1px solid var(--border-color); vertical-align: top; background: var(--card-bg); transition: background-color var(--transition), border-color var(--transition); }
+        .db-table tr:nth-child(even) td { background: var(--bg-color); }
         .table-responsive { overflow-x: auto; width: 100%; }
         
         .detail-section-title {
             color: var(--accent-light);
             border-left: 4px solid var(--accent-light);
-            padding-left: 10px;
-            margin: 25px 0 10px 0;
-            font-size: 1.1rem;
+            padding-left: 12px;
+            margin: 35px 0 15px 0;
+            font-size: 1.15rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .gdrive-link-badge {
@@ -228,29 +298,25 @@
             font-size: 0.75rem;
             text-decoration: none;
             margin-top: 5px;
+            margin-right: 6px;
             border: 1px solid #d2e3fc;
         }
-        .gdrive-link-badge:hover { background: #d2e3fc; }
+        body.dark-theme .gdrive-link-badge {
+            background: #1e3a8a;
+            color: #38bdf8;
+            border-color: #1e40af;
+        }
 
         .link-container-wrapper {
-            background: #f8fafc;
-            border: 1px dashed var(--border-color);
-            padding: 12px;
-            border-radius: 6px;
+            background: var(--bg-color);
+            border: 2px dashed var(--border-color);
+            padding: 15px;
+            border-radius: var(--radius-lg);
             margin-bottom: 15px;
-        }
-
-        @media print {
-            body { background: #fff; color: #000; padding: 0; }
-            header, .btn, .wizard-progress, .btn-footer-nav, .gdrive-input-box-area { display: none !important; }
-            .box { border: none; box-shadow: none; padding: 0; }
-            .detail-section-title { border-left-color: #000; color: #000; page-break-after: avoid; }
-            .db-table th { background: #f0f0f0 !important; color: #000; }
-            .project-card { border: none; page-break-inside: avoid; }
-            .app-view { display: none !important; }
-            #view-full-details { display: block !important; }
+            transition: background-color var(--transition), border-color var(--transition);
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -258,16 +324,18 @@
     <header>
         <h1>Project Diary &amp; Management Matrix</h1>
         <p>Created by Minhaj Civil IUT 10</p>
+        <button class="btn btn-sm btn-secondary" id="theme-toggle-btn" onclick="toggleTheme()" style="position: absolute; top: 20px; right: 20px;">🌙 Dark Mode</button>
     </header>
 
     <div id="view-home" class="app-view active">
-        <div class="box" style="background: #edf2f7; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 15px;">
-            <div style="font-size:0.9rem; font-weight:600; color:var(--accent);">Database Backup &amp; Migration Utilities:</div>
+        <div class="box" style="background: var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 15px; border: none;">
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-main);">Database Backup &amp; Local Cloud Utilities:</div>
             <div class="btn-group">
-                <button class="btn btn-sm" onclick="exportDataToCSV()">📥 Export Master CSV</button>
+                <button class="btn btn-sm btn-gdrive" onclick="exportDataToJSON()">📥 Save Backup File to Device</button>
                 <label class="btn btn-sm btn-success" style="margin:0; cursor:pointer;">
-                    📤 Import CSV File <input type="file" id="csv-file-importer" accept=".csv" style="display:none;" onchange="importDataFromCSV(event)">
+                    📤 Restore from File <input type="file" id="json-file-importer" accept=".json" style="display:none;" onchange="importDataFromJSON(event)">
                 </label>
+                <button class="btn btn-sm" onclick="exportDataToCSV()">📊 Export Spreadsheet (CSV)</button>
             </div>
         </div>
 
@@ -347,7 +415,7 @@
             <textarea id="p2-decision" placeholder="Resolutions or parameters chosen..."></textarea>
             <div class="sub-box">
                 <label>Datewise Work Executed As Per Decision</label>
-                <textarea id="p2-work" placeholder="Sub-part: Work completed on site..."></textarea>
+                <textarea id="w-work" placeholder="Sub-part: Work completed on site..."></textarea>
             </div>
 
             <label>Datewise Problem Faced</label>
@@ -512,7 +580,7 @@
             <span class="wizard-step">5. Tender Process</span>
             <span class="wizard-step current">6. Work Execution</span>
         </div>
-        <div class="box" style="border-top: 4px solid var(--execution);">
+        <div class="box" style="border-top: 5px solid var(--execution);">
             <div class="box-title" style="color: var(--execution);">Step 6: Work Execution Phase</div>
             <label>Execution Log Date</label>
             <input type="date" id="p6-date">
@@ -553,13 +621,11 @@
 </div>
 
 <script>
-    // System Data Engine Initializer with Fallback Protection Keys
     let database = [];
     try {
         const rawLocalData = localStorage.getItem('wizard_diary_data_v4_execution');
         if(rawLocalData) {
             database = JSON.parse(rawLocalData);
-            // Dynamic Migration Layer: Verifies all sub-arrays exist safely so old cached data doesn't break new updates
             database.forEach(p => {
                 if(!p.metaLinks) p.metaLinks = [];
                 if(!p.plans) p.plans = [];
@@ -580,8 +646,57 @@
     let isEditingExistingMode = false;
 
     window.onload = function() {
+        const savedTheme = localStorage.getItem('diary_theme');
+        if(savedTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.getElementById('theme-toggle-btn').innerText = '☀️ Light Mode';
+        }
         renderMasterDatabase();
     };
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        localStorage.setItem('diary_theme', isDark ? 'dark' : 'light');
+        document.getElementById('theme-toggle-btn').innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+
+    // --- STREAMLINED LOCAL DEVICE GOOGLE DRIVE SYNC SHORTCUT ENGINE ---
+    function exportDataToJSON() {
+        if(database.length === 0) return alert("No active data entries to backup.");
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `Project_Diary_Backup_${new Date().toISOString().slice(0,10)}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.removeChild(downloadAnchor);
+    }
+
+    function importDataFromJSON(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const parsedData = JSON.parse(e.target.result);
+                if(Array.isArray(parsedData)) {
+                    if(confirm(`Successfully verified backup file. Do you want to overwrite your local app history?`)) {
+                        database = parsedData;
+                        syncMemory();
+                        renderMasterDatabase();
+                        alert("Database restored successfully!");
+                    }
+                } else {
+                    alert("Invalid backup file architecture constraint structure.");
+                }
+            } catch(err) {
+                alert("Error reading file parsing matrix data properties.");
+            }
+        };
+        reader.readAsText(file);
+    }
 
     function addNewDriveLinkInputRow(containerId, initialValue = "", initialLabel = "") {
         const container = document.getElementById(containerId);
@@ -592,9 +707,9 @@
         div.style.gap = '10px';
         div.style.marginBottom = '8px';
         div.innerHTML = `
-            <input type="text" class="gdrive-label-field" placeholder="Label Description" value="${initialLabel}" style="width:35%; margin:0;">
-            <input type="url" class="gdrive-url-field" placeholder="https://drive.google.com/..." value="${initialValue}" style="width:55%; margin:0;">
-            <button class="btn btn-danger btn-sm" type="button" onclick="this.parentElement.remove()" style="width:10%;">&times;</button>
+            <input type="text" class="gdrive-label-field" placeholder="Label Description" value="${initialLabel}" style="width:35%; margin:0; padding:8px; border-width:1px;">
+            <input type="url" class="gdrive-url-field" placeholder="https://drive.google.com/..." value="${initialValue}" style="width:55%; margin:0; padding:8px; border-width:1px;">
+            <button class="btn btn-danger btn-sm" type="button" onclick="this.parentElement.remove()" style="width:10%; padding:0; height:38px;">&times;</button>
         `;
         container.appendChild(div);
     }
@@ -688,19 +803,15 @@
         switchView('view-wizard-p2');
     }
 
-    function getCurrentProjectRef() {
-        return database.find(p => p.id === currentWorkingProjId);
-    }
-
     function commitP2Log() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         const d = document.getElementById('p2-date').value;
         if(!d) return alert("Select an entry log target date.");
 
         const links = collectDriveLinksFromContainer('p2-links-list');
         const planText = document.getElementById('p2-plan').value;
         const decText = document.getElementById('p2-decision').value;
-        const workText = document.getElementById('p2-work').value;
+        const workText = document.getElementById('w-work').value;
         const probText = document.getElementById('p2-problem').value;
         const discText = document.getElementById('p2-solDisc').value;
         const implText = document.getElementById('p2-solImpl').value;
@@ -716,7 +827,7 @@
     }
 
     function commitP3Log() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         const d = document.getElementById('p3-date').value;
         if(!d) return alert("Select an entry log target date.");
 
@@ -734,7 +845,7 @@
     }
 
     function commitP4Log() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         const d = document.getElementById('p4-date').value;
         if(!d) return alert("Select an entry log target date.");
 
@@ -754,7 +865,7 @@
     }
 
     function commitP5Log() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         const d = document.getElementById('p5-date').value;
         if(!d) return alert("Select an entry log target date.");
 
@@ -763,7 +874,7 @@
             tenderId: document.getElementById('p5-tenderId').value,
             appInfo: document.getElementById('p5-appInfo').value,
             appDate: document.getElementById('p5-appDate').value,
-            bidder: document.getElementById('p5-bidder').value, // Explicit Bidder preservation
+            bidder: document.getElementById('p5-bidder').value,
             value: document.getElementById('p5-value').value,
             attachments: collectDriveLinksFromContainer('p5-links-list')
         });
@@ -775,7 +886,7 @@
     }
 
     function commitP6Log() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         const d = document.getElementById('p6-date').value;
         if(!d) return alert("Select a work execution entry date.");
 
@@ -795,7 +906,7 @@
     }
 
     function renderSubTablesPage2() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         let html = `<h4>Current Operational Logs:</h4>`;
         html += `<table class="db-table"><tr><th>Type</th><th>Date</th><th>Logged Value</th><th>Action</th></tr>`;
         p.plans.forEach(r => html += `<tr><td>Plan</td><td>${r.date}</td><td>${r.text} ${buildGDriveHtmlBadges(r.attachments)}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('plans','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
@@ -807,7 +918,7 @@
     }
 
     function renderSubTablesPage3() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         let html = `<table class="db-table"><tr><th>Date</th><th>Draft Layout</th><th>Note sent</th><th>Action</th></tr>`;
         p.layouts.forEach(r => html += `<tr><td>${r.date}</td><td>${r.draft} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.note}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('layouts','${r.id}','view-wizard-p3')">&times;</button></td></tr>`);
         html += `</table>`;
@@ -816,7 +927,7 @@
     }
 
     function renderSubTablesPage4() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         let html = `<table class="db-table"><tr><th>Date</th><th>Type</th><th>Decision</th><th>Received Date</th><th>Amount</th><th>Action</th></tr>`;
         p.budgets.forEach(r => html += `<tr><td>${r.date}</td><td>${r.type}</td><td>${r.decision} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.recDate}</td><td>${Number(r.amount).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('budgets','${r.id}','view-wizard-p4')">&times;</button></td></tr>`);
         html += `</table>`;
@@ -825,7 +936,7 @@
     }
 
     function renderSubTablesPage5() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         let html = `<table class="db-table"><tr><th>Date</th><th>Tender ID</th><th>Info / APP</th><th>Approved Date</th><th>Winner / Bidder</th><th>Value</th><th>Action</th></tr>`;
         p.tenders.forEach(r => html += `<tr><td>${r.date}</td><td><code>${r.tenderId}</code></td><td>${r.appInfo} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.appDate || 'N/A'}</td><td><strong>${r.bidder || 'N/A'}</strong></td><td>${Number(r.value).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('tenders','${r.id}','view-wizard-p5')">&times;</button></td></tr>`);
         html += `</table>`;
@@ -834,42 +945,12 @@
     }
 
     function renderSubTablesPage6() {
-        const p = getCurrentProjectRef();
+        const p = database.find(proj => proj.id === currentWorkingProjId);
         let html = `<table class="db-table"><tr><th>Date</th><th>Component</th><th>Progress Achievements</th><th>% Complete</th><th>Remarks</th><th>Action</th></tr>`;
         p.executions.forEach(r => html += `<tr><td>${r.date}</td><td><strong>${r.component}</strong></td><td>${r.progress} ${buildGDriveHtmlBadges(r.attachments)}</td><td><strong>${r.percent}%</strong></td><td><i>${r.remarks || 'None'}</i></td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('executions','${r.id}','view-wizard-p6')">&times;</button></td></tr>`);
         html += `</table>`;
         const container = document.getElementById('p6-running-table-container');
         if(container) container.innerHTML = p.executions.length === 0 ? "" : html;
-    }
-
-    function editEntireProjectRoute(id) {
-        currentWorkingProjId = id;
-        isEditingExistingMode = true;
-        const p = database.find(proj => proj.id === id);
-
-        document.getElementById('w-projId').disabled = true;
-        document.getElementById('w-projId').value = p.id;
-        document.getElementById('w-projFy').value = p.fy;
-        document.getElementById('w-projName').value = p.name;
-        document.getElementById('w-projDetails').value = p.details || '';
-
-        const listContainer = document.getElementById('p1-links-list');
-        if(listContainer) {
-            listContainer.innerHTML = "";
-            if(p.metaLinks) {
-                p.metaLinks.forEach(l => addNewDriveLinkInputRow('p1-links-list', l.link, l.name));
-            }
-        }
-
-        switchView('view-wizard-p1');
-    }
-
-    function deleteEntireProject(id) {
-        if(confirm("Completely wipe this structural dataset record from storage?")) {
-            database = database.filter(p => p.id !== id);
-            syncMemory();
-            renderMasterDatabase();
-        }
     }
 
     function showFullDetailsPage(id) {
@@ -879,11 +960,11 @@
         document.getElementById('details-page-title').innerText = `Full Details Dossier: [${p.id}]`;
         
         let htmlContent = `
-            <div style="background: #edf2f7; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left:4px solid var(--accent);">
-                <p style="margin: 0 0 8px 0;"><strong>Financial Year (FY):</strong> ${p.fy}</p>
-                <p style="margin: 0 0 8px 0;"><strong>Project ID:</strong> ${p.id}</p>
-                <p style="margin: 0 0 8px 0;"><strong>Name of Project:</strong> ${p.name}</p>
-                <p style="margin: 0 0 8px 0;"><strong>Baseline Scope parameters:</strong> ${p.details || 'N/A'}</p>
+            <div style="background: var(--bg-color); padding: 20px; border-radius: var(--radius-lg); margin-bottom: 25px; border-left:5px solid var(--accent);">
+                <p style="margin: 0 0 8px 0; font-size:1.05rem;"><strong>Financial Year (FY):</strong> ${p.fy}</p>
+                <p style="margin: 0 0 8px 0; font-size:1.05rem;"><strong>Project ID:</strong> ${p.id}</p>
+                <p style="margin: 0 0 8px 0; font-size:1.05rem;"><strong>Name of Project:</strong> ${p.name}</p>
+                <p style="margin: 0 0 12px 0; font-size:1.05rem;"><strong>Baseline Scope parameters:</strong> ${p.details || 'N/A'}</p>
                 ${p.metaLinks && p.metaLinks.length > 0 ? `<p style="margin:0;"><strong>Master Blueprints Archive:</strong> ${buildGDriveHtmlBadges(p.metaLinks)}</p>` : ''}
             </div>
 
@@ -907,7 +988,7 @@
             ${p.problems.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No impediment entries recorded.</p>' : `
                 <div class="table-responsive"><table class="db-table">
                     <thead><tr><th style="width:20%">Date</th><th>Problems / Obstacles Faced</th><th>Solutions Discussed</th><th>Solutions Implemented</th></tr></thead>
-                    <tbody>${p.problems.map(l => `<tr><td><strong>${l.date}</strong></td><td style="color:var(--danger)">${l.problem} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.discussed || 'N/A'}</td><td style="color:var(--success); font-weight:600;">${l.implemented || 'N/A'}</td></tr>`).join('')}</tbody>
+                    <tbody>${p.problems.map(l => `<tr><td><strong>${l.date}</strong></td><td style="color:var(--danger); font-weight:600;">${l.problem} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.discussed || 'N/A'}</td><td style="color:var(--success); font-weight:600;">${l.implemented || 'N/A'}</td></tr>`).join('')}</tbody>
                 </table></div>
             `}
 
@@ -923,7 +1004,7 @@
             ${p.budgets.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No budget entries cataloged.</p>' : `
                 <div class="table-responsive"><table class="db-table">
                     <thead><tr><th style="width:15%">Log Date</th><th style="width:20%">Budget Type</th><th>Datewise Decisions Log</th><th style="width:15%">Receive Date</th><th style="width:15%">Amount</th></tr></thead>
-                    <tbody>${p.budgets.map(l => `<tr><td><strong>${l.date}</strong></td><td><mark style="background:#feebc8; padding:2px 4px; border-radius:3px;">${l.type || 'N/A'}</mark></td><td>${l.decision} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.recDate || 'N/A'}</td><td style="font-weight:700; color:var(--success); text-align:right;">${l.amount ? Number(l.amount).toLocaleString() : '0'}</td></tr>`).join('')}</tbody>
+                    <tbody>${p.budgets.map(l => `<tr><td><strong>${l.date}</strong></td><td><mark style="background:#fef3c7; color:#d97706; font-weight:700; padding:3px 8px; border-radius:4px; font-size:0.8rem;">${l.type || 'N/A'}</mark></td><td>${l.decision} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.recDate || 'N/A'}</td><td style="font-weight:700; color:var(--success); text-align:right;">${l.amount ? Number(l.amount).toLocaleString() : '0'}</td></tr>`).join('')}</tbody>
                 </table></div>
             `}
 
@@ -939,20 +1020,20 @@
             ${(!p.executions || p.executions.length === 0) ? '<p style="color:var(--text-muted); padding-left:15px;">No field construction milestones logged.</p>' : `
                 <div class="table-responsive"><table class="db-table">
                     <thead>
-                        <tr style="background:#faf5ff;">
+                        <tr style="background:var(--bg-color);">
                             <th style="width:15%">Log Date</th>
                             <th style="width:20%">Work Component</th>
                             <th>Site Progress Status &amp; Accomplishments</th>
-                            <th style="width:12%">% Complete</th>
+                            <th style="width:15%">% Complete</th>
                             <th style="width:20%">Engineering Remarks</th>
                         </tr>
                     </thead>
                     <tbody>${p.executions.map(l => `
                         <tr>
                             <td><strong>${l.date}</strong></td>
-                            <td style="color:var(--execution); font-weight:600;">${l.component}</td>
+                            <td style="color:var(--execution); font-weight:700;">${l.component}</td>
                             <td>${l.progress} ${buildGDriveHtmlBadges(l.attachments)}</td>
-                            <td><mark style="background:#ebd3f8; padding:2px 6px; border-radius:3px; font-weight:bold;">${l.percent}%</mark></td>
+                            <td><span style="background:#f3e8ff; color:#7c3aed; font-weight:800; padding:4px 10px; border-radius:20px; font-size:0.82rem;">${l.percent}%</span></td>
                             <td><i>${l.remarks || 'N/A'}</i></td>
                         </tr>
                     `).join('')}</tbody>
@@ -970,7 +1051,7 @@
         out.innerHTML = "";
 
         if(database.length === 0) {
-            out.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px; font-weight:bold;">No project data rows found.</p>`;
+            out.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px; font-weight:bold;">No project data rows found.</p>`;
             return;
         }
 
@@ -992,7 +1073,7 @@
                         <div class="project-meta-info">
                             <strong>FY:</strong> ${p.fy} | 
                             <strong>ID:</strong> <code>${p.id}</code> | 
-                            <strong>Name:</strong> <span style="font-weight:600; margin-left:4px;">${p.name}</span>
+                            <strong>Name:</strong> <span style="font-weight:700; color:var(--text-main); margin-left:4px;">${p.name}</span>
                         </div>
                         <div class="btn-group">
                             <button class="btn btn-sm btn-success" onclick="showFullDetailsPage('${p.id}')">See Full Details</button>
@@ -1020,7 +1101,6 @@
             if(p.problems) p.problems.forEach(l => csvRows.push(`PROBLEM,"${p.id}",,,,"${l.date}","${l.problem.replace(/"/g, '""')}","${l.discussed.replace(/"/g, '""')}","${l.implemented.replace(/"/g, '""')}",,,`));
             if(p.layouts) p.layouts.forEach(l => csvRows.push(`LAYOUT,"${p.id}",,,,"${l.date}","${l.draft.replace(/"/g, '""')}","${l.note.replace(/"/g, '""')}",,,,`));
             if(p.budgets) p.budgets.forEach(l => csvRows.push(`BUDGET,"${p.id}",,,,"${l.date}","${l.type}","${l.decision.replace(/"/g, '""')}","${l.recDate}","${l.amount}",,`));
-            // Fixed CSV Exporter line to fully index the Winning Bidder value row context
             if(p.tenders) p.tenders.forEach(l => csvRows.push(`TENDER,"${p.id}",,,,"${l.date}","${l.tenderId}","${l.appInfo.replace(/"/g, '""')}","${l.appDate}","${(l.bidder || '').replace(/"/g, '""')}","${l.value}"`));
             if(p.executions) p.executions.forEach(l => csvRows.push(`EXECUTION,"${p.id}",,,,"${l.date}","${l.component.replace(/"/g, '""')}","${l.progress.replace(/"/g, '""')}","${l.percent}","${l.remarks.replace(/"/g, '""')}",`));
         });
@@ -1033,62 +1113,6 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }
-
-    function importDataFromCSV(event) {
-        const file = event.target.files[0];
-        if(!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const text = e.target.result;
-            const lines = text.split("\n");
-            let importedDatabase = [];
-
-            for(let i = 1; i < lines.length; i++) {
-                if(!lines[i].trim()) continue;
-                let parts = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(x => x.replace(/^"|"$/g, '').trim());
-                if(parts.length < 2) continue;
-
-                const type = parts[0];
-                const pId = parts[1];
-
-                if(type === "METADATA") {
-                    importedDatabase.push({
-                        id: pId, fy: parts[2], name: parts[3], details: parts[4],
-                        metaLinks:[], plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[], executions:[]
-                    });
-                    continue;
-                }
-
-                let p = importedDatabase.find(proj => proj.id === pId);
-                if(!p) {
-                    p = { id: pId, fy: "Unknown", name: "Imported Record", details: "", metaLinks:[], plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[], executions:[] };
-                    importedDatabase.push(p);
-                }
-
-                if(type === "GDRIVE_META") p.metaLinks.push({ name: parts[5], link: parts[6] });
-                else if(type === "PLAN") p.plans.push({ id: 'L-'+Date.now()+i, date: parts[5], text: parts[6] });
-                else if(type === "DECISION") p.decisions.push({ id: 'L-'+Date.now()+i, date: parts[5], decision: parts[6], work: parts[7] });
-                else if(type === "PROBLEM") p.problems.push({ id: 'L-'+Date.now()+i, date: parts[5], problem: parts[6], discussed: parts[7], implemented: parts[8] });
-                else if(type === "LAYOUT") p.layouts.push({ id: 'L-'+Date.now()+i, date: parts[5], draft: parts[6], note: parts[7] });
-                else if(type === "BUDGET") p.budgets.push({ id: 'L-'+Date.now()+i, date: parts[5], type: parts[6], decision: parts[7], recDate: parts[8], amount: parts[9] });
-                // Fixed CSV Importer to accurately map, parse, and bind back the Bidder Column String
-                else if(type === "TENDER") p.tenders.push({ id: 'L-'+Date.now()+i, date: parts[5], tenderId: parts[6], appInfo: parts[7], appDate: parts[8], bidder: parts[9], value: parts[10] });
-                else if(type === "EXECUTION") p.executions.push({ id: 'L-'+Date.now()+i, date: parts[5], component: parts[6], progress: parts[7], percent: parts[8], remarks: parts[9] });
-            }
-
-            if(importedDatabase.length > 0) {
-                if(confirm(`Successfully parsed ${importedDatabase.length} projects. Replace your active LocalStorage data?`)) {
-                    database = importedDatabase;
-                    syncMemory();
-                    renderMasterDatabase();
-                }
-            } else {
-                alert("Invalid or corrupt CSV file format mappings.");
-            }
-        };
-        reader.readAsText(file);
     }
 
     function clearPageFormFields() {
