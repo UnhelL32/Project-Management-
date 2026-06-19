@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Diary - Minhaj Civil IUT 10</title>
+    <title>Project Diary Matrix - Minhaj Civil IUT 10</title>
     <style>
         :root {
-            --bg-color: #f4f6f8;
+            --bg-color: #f7fafc;
             --card-bg: #ffffff;
             --text-main: #2d3748;
             --text-muted: #718096;
@@ -15,19 +15,19 @@
             --border-color: #cbd5e0;
             --danger: #c53030;
             --success: #2f855a;
-            --warning: #c05621;
+            --warning: #dd6b20;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.4;
+            line-height: 1.5;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
         }
 
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1100px; margin: 0 auto; }
         
         header {
             text-align: center;
@@ -38,14 +38,8 @@
         header h1 { margin: 0; color: var(--accent); font-size: 1.8rem; }
         header p { margin: 5px 0 0; color: var(--text-muted); font-weight: bold; }
 
-        .layout-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-        }
-        @media(min-width: 1024px) {
-            .layout-grid { grid-template-columns: 450px 1fr; }
-        }
+        .app-view { display: none; }
+        .app-view.active { display: block; }
 
         .box {
             background: var(--card-bg);
@@ -53,27 +47,80 @@
             border-radius: 6px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
         .box-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--accent);
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-transform: uppercase;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 5px;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 8px;
         }
+
+        /* --- NEW AESTHETIC RESPONSIVE WIZARD PROGRESS BAR --- */
+        .wizard-progress {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            background: #edf2f7;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        
+        .wizard-step {
+            flex: 1 1 140px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            text-align: center;
+            padding: 10px 6px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .wizard-step.current {
+            color: #ffffff;
+            background: var(--accent-light);
+            border-color: var(--accent-light);
+            box-shadow: 0 2px 4px rgba(43, 108, 176, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .wizard-progress {
+                gap: 6px;
+                padding: 6px;
+            }
+            .wizard-step {
+                flex: 1 1 calc(50% - 6px); /* 2 blocks per row on very narrow screens */
+                font-size: 0.7rem;
+                padding: 8px 4px;
+            }
+            .wizard-step:last-child:nth-child(odd) {
+                flex: 1 1 100%; /* let the odd last item span full width */
+            }
+        }
+        /* ---------------------------------------------------- */
 
         .sub-box {
             border-left: 3px solid var(--accent-light);
-            padding-left: 12px;
-            margin: 10px 0;
+            padding-left: 15px;
+            margin: 15px 0;
             background: #f8fafc;
-            padding-top: 6px;
-            padding-bottom: 6px;
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         label {
@@ -81,595 +128,582 @@
             font-weight: 600;
             font-size: 0.8rem;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             box-sizing: border-box;
+            background: #fafafa;
         }
-        textarea { min-height: 60px; resize: vertical; }
+        input:focus, textarea:focus, select:focus {
+            background: #fff;
+            border-color: var(--accent-light);
+            outline: none;
+        }
+        textarea { min-height: 80px; resize: vertical; }
 
-        .btn-group { display: flex; gap: 10px; }
+        .btn-footer-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            gap: 10px;
+        }
+
         .btn {
-            padding: 7px 14px;
+            padding: 10px 20px;
             border: none;
             border-radius: 4px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             cursor: pointer;
             color: #fff;
             background-color: var(--accent-light);
+            transition: opacity 0.2s;
         }
         .btn:hover { opacity: 0.9; }
         .btn-danger { background-color: var(--danger); }
         .btn-success { background-color: var(--success); }
-        .btn-secondary { background-color: var(--text-muted); }
-        .btn-sm { padding: 3px 8px; font-size: 0.75rem; }
+        .btn-secondary { background-color: #718096; }
+        .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+        .btn-block { width: 100%; padding: 12px; font-size: 1rem; }
 
-        /* Database display layout */
+        /* DB Tables layout */
         .year-header {
             background: var(--accent);
             color: #fff;
-            padding: 8px 15px;
-            font-size: 1.2rem;
+            padding: 10px 15px;
+            font-size: 1.25rem;
             font-weight: bold;
             border-radius: 4px;
-            margin-top: 20px;
+            margin-top: 30px;
         }
-
         .project-card {
             border: 1px solid var(--border-color);
             background: #fff;
-            margin-top: 10px;
-            border-radius: 4px;
+            margin-top: 15px;
+            border-radius: 6px;
+            overflow: hidden;
         }
-
         .project-summary {
-            padding: 12px;
+            padding: 15px;
             background: #edf2f7;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
         }
-
-        .project-details-area { padding: 15px; }
-
-        /* Database Tables inside projects */
+        .project-details-area { padding: 15px; overflow-x: auto; }
+        
         .db-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             font-size: 0.85rem;
+            min-width: 500px; /* Forces scroll container context instead of squishing text */
         }
         .db-table th {
             background: #e2e8f0;
             color: var(--text-main);
             text-align: left;
-            padding: 6px 10px;
+            padding: 8px 10px;
             border: 1px solid var(--border-color);
         }
-        .db-table td {
-            padding: 6px 10px;
-            border: 1px solid var(--border-color);
-            vertical-align: top;
-        }
+        .db-table td { padding: 8px 10px; border: 1px solid var(--border-color); vertical-align: top; }
         .db-table tr:nth-child(even) { background: #f7fafc; }
-
-        .nested-list { margin: 0; padding-left: 15px; }
-        .active-project-highlight {
-            border: 2px solid var(--success) !important;
-            background: #f0fff4;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Project Diary & Logs Database</h1>
+        <h1>Project Diary & Management Matrix</h1>
         <p>Created by Minhaj Civil IUT 10</p>
     </header>
 
-    <div class="layout-grid">
-        <div>
-            <div class="box">
-                <div class="box-title" id="projFormTitle">Create New Project</div>
-                <input type="hidden" id="editProjIdx" value="">
-                
-                <label>Project ID</label>
-                <input type="text" id="projId" placeholder="e.g., IUT-CIVIL-2026-04">
+    <div id="view-home" class="app-view active">
+        <div class="box">
+            <div class="box-title">Master Project Database (Yearwise Summary)</div>
+            <div id="masterDbContainer"></div>
+        </div>
+        <button class="btn btn-success btn-block" onclick="startNewProjectWizard()">＋ Create New Project Entry Record</button>
+    </div>
 
-                <label>Financial Year (FY)</label>
-                <input type="text" id="projFy" placeholder="e.g., 2026-2027">
-
-                <label>Name of Project</label>
-                <input type="text" id="projName" placeholder="Enter formal project name">
-
-                <label>Details of Project</label>
-                <textarea id="projDetails" placeholder="Enter general details/scope..."></textarea>
-
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="saveProject()">Save Project</button>
-                    <button class="btn btn-secondary" id="clearProjBtn" style="display:none;" onclick="resetProjectForm()">Cancel</button>
-                </div>
-            </div>
-
-            <div class="box" id="logFormBox" style="display: none;">
-                <div class="box-title" style="color: var(--success);" id="logFormTitle">Add Entry Row</div>
-                <input type="hidden" id="editLogId" value="">
-
-                <label>Log Type Category</label>
-                <select id="logCategory" onchange="switchLogFormFields()">
-                    <option value="plan">Datewise Plan</option>
-                    <option value="decision">Datewise Decision & Executed Work</option>
-                    <option value="problem">Datewise Problem & Solutions</option>
-                    <option value="layout">Layout Status / Note Details</option>
-                    <option value="budget">Budget Databasing [Add/Edit Component]</option>
-                    <option value="tender">Tender Procurement Row</option>
-                </select>
-
-                <label>Target Entry Date</label>
-                <input type="date" id="logDate">
-
-                <div id="f-plan" class="log-fields-block">
-                    <label>Plan Details</label>
-                    <textarea id="planText" placeholder="Describe plan objective..."></textarea>
-                </div>
-
-                <div id="f-decision" class="log-fields-block" style="display:none;">
-                    <label>Important Decision</label>
-                    <textarea id="decisionText" placeholder="What key decision was reached?"></textarea>
-                    <div class="sub-box">
-                        <label>Work executed as per decisions (Sub-Part)</label>
-                        <textarea id="decisionWorkText" placeholder="Detail any actual physical/structural execution context..."></textarea>
-                    </div>
-                </div>
-
-                <div id="f-problem" class="log-fields-block" style="display:none;">
-                    <label>Problem Faced</label>
-                    <textarea id="problemText" placeholder="Describe bottlenecks, field challenges..."></textarea>
-                    <div class="sub-box">
-                        <label>Solutions Discussed</label>
-                        <textarea id="solDiscussed" placeholder="Options weighed..."></textarea>
-                        <label style="margin-top:5px;">Solutions Implemented</label>
-                        <textarea id="solImplemented" placeholder="Action taken..."></textarea>
-                    </div>
-                </div>
-
-                <div id="f-layout" class="log-fields-block" style="display:none;">
-                    <label>Draft Layout Details</label>
-                    <textarea id="layoutDraftText" placeholder="Coordinates, adjustments, site plans..."></textarea>
-                    <label>Note Sent to Layout Committee / Design & Drawing</label>
-                    <textarea id="layoutNoteText" placeholder="Ref numbers, directives sent..."></textarea>
-                </div>
-
-                <div id="f-budget" class="log-fields-block" style="display:none;">
-                    <label>Budget Type</label>
-                    <input type="text" id="budgetType" placeholder="e.g., Revenue, Capital, Special Grant">
-                    <label>Datewise Budget Decision</label>
-                    <textarea id="budgetDecision" placeholder="Add allocation updates, approvals revisions..."></textarea>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <div>
-                            <label>Receive Date</label>
-                            <input type="date" id="budgetRecDate">
-                        </div>
-                        <div>
-                            <label>Amount Received</label>
-                            <input type="number" id="budgetAmount" placeholder="0.00">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="f-tender" class="log-fields-block" style="display:none;">
-                    <label>Tender ID</label>
-                    <input type="text" id="tenderId" placeholder="e.g., TND/IUT/CIVIL-01">
-                    <label>Datewise Tender Info & APP Info</label>
-                    <textarea id="tenderAppInfo" placeholder="Annual Procurement Plan mapping information..."></textarea>
-                    <label>Approved Date</label>
-                    <input type="date" id="tenderAppDate">
-                    <label>Winning Bidder</label>
-                    <input type="text" id="tenderBidder" placeholder="Contractor / Firm Corporate Name">
-                    <label>Tender Contract Value</label>
-                    <input type="number" id="tenderValue" placeholder="Total Value amount">
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn btn-success" onclick="saveLogEntry()">Save Entry Row</button>
-                    <button class="btn btn-secondary" onclick="cancelLogEditing()">Clear/Cancel</button>
-                </div>
+    <div id="view-wizard-p1" class="app-view">
+        <div class="wizard-progress">
+            <span class="wizard-step current">1. Metadata</span>
+            <span class="wizard-step">2. Logs & Decisions</span>
+            <span class="wizard-step">3. Layouts & Drawings</span>
+            <span class="wizard-step">4. Budgets</span>
+            <span class="wizard-step">5. Tenders</span>
+        </div>
+        <div class="box">
+            <div class="box-title">Step 1: Core Project Parameters</div>
+            <label>Project ID *</label>
+            <input type="text" id="w-projId" placeholder="e.g., IUT-CIVIL-2026-99">
+            <label>Financial Year (FY) *</label>
+            <input type="text" id="w-projFy" placeholder="e.g., 2026-2027">
+            <label>Name of Project *</label>
+            <input type="text" id="w-projName" placeholder="Enter full administrative name">
+            <label>Details of Project</label>
+            <textarea id="w-projDetails" placeholder="Scope details, measurements, geo-locations..."></textarea>
+            
+            <div class="btn-footer-nav">
+                <button class="btn btn-secondary" onclick="navigateToHome()">← Return Home</button>
+                <button class="btn" onclick="saveP1AndNext()">Next Page →</button>
             </div>
         </div>
+    </div>
 
-        <div>
-            <div class="box">
-                <div class="box-title" style="margin-bottom:5px;">Master Database Matrix (Yearwise)</div>
-                <div id="masterDbContainer"></div>
+    <div id="view-wizard-p2" class="app-view">
+        <div class="wizard-progress">
+            <span class="wizard-step">1. Metadata</span>
+            <span class="wizard-step current">2. Logs & Decisions</span>
+            <span class="wizard-step">3. Layouts & Drawings</span>
+            <span class="wizard-step">4. Budgets</span>
+            <span class="wizard-step">5. Tenders</span>
+        </div>
+        <div class="box">
+            <div class="box-title">Step 2: Add Datewise Operational Diary Entry</div>
+            <label>Log Entry Target Date</label>
+            <input type="date" id="p2-date">
+            
+            <label>Datewise Plan Details</label>
+            <textarea id="p2-plan" placeholder="Operational milestones planned..."></textarea>
+
+            <label>Datewise Important Decision</label>
+            <textarea id="p2-decision" placeholder="Resolutions or parameters chosen..."></textarea>
+            <div class="sub-box">
+                <label>Datewise Work Executed As Per Decision</label>
+                <textarea id="p2-work" placeholder="Sub-part: Work completed on site..."></textarea>
+            </div>
+
+            <label>Datewise Problem Faced</label>
+            <textarea id="p2-problem" placeholder="Delays, materials, engineering hurdles..."></textarea>
+            <div class="sub-box">
+                <label>Solutions Discussed</label>
+                <textarea id="p2-solDisc" placeholder="Options or brainstorming notes..."></textarea>
+                <label style="margin-top:10px;">Solutions Implemented</label>
+                <textarea id="p2-solImpl" placeholder="Final countermeasure deployment details..."></textarea>
+            </div>
+
+            <button class="btn btn-success" onclick="commitP2Log()">Commit Dynamic Log Row</button>
+            <div id="p2-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
+
+            <div class="btn-footer-nav">
+                <button class="btn btn-secondary" onclick="switchView('view-wizard-p1')">← Previous</button>
+                <button class="btn" onclick="switchView('view-wizard-p3')">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-wizard-p3" class="app-view">
+        <div class="wizard-progress">
+            <span class="wizard-step">1. Metadata</span>
+            <span class="wizard-step">2. Logs & Decisions</span>
+            <span class="wizard-step current">3. Layouts & Drawings</span>
+            <span class="wizard-step">4. Budgets</span>
+            <span class="wizard-step">5. Tenders</span>
+        </div>
+        <div class="box">
+            <div class="box-title">Step 3: Layout Tracking & Structural Drawings</div>
+            <label>Date</label>
+            <input type="date" id="p3-date">
+            <label>Datewise Draft Layout Details</label>
+            <textarea id="p3-draft" placeholder="Alignments, survey notes, spatial adjustments..."></textarea>
+            <label>Note Sent to Layout Committee / Design & Drawing Dept.</label>
+            <textarea id="p3-note" placeholder="Memo reference, issues submitted for clearance..."></textarea>
+
+            <button class="btn btn-success" onclick="commitP3Log()">Commit Design Log Row</button>
+            <div id="p3-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
+
+            <div class="btn-footer-nav">
+                <button class="btn btn-secondary" onclick="switchView('view-wizard-p2')">← Previous</button>
+                <button class="btn" onclick="switchView('view-wizard-p4')">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-wizard-p4" class="app-view">
+        <div class="wizard-progress">
+            <span class="wizard-step">1. Metadata</span>
+            <span class="wizard-step">2. Logs & Decisions</span>
+            <span class="wizard-step">3. Layouts & Drawings</span>
+            <span class="wizard-step current">4. Budgets</span>
+            <span class="wizard-step">5. Tenders</span>
+        </div>
+        <div class="box">
+            <div class="box-title">Step 4: Budget Framework Mapping</div>
+            <label>Log Reference Date</label>
+            <input type="date" id="p4-date">
+            <label>Budget Type</label>
+            <input type="text" id="p4-type" placeholder="e.g., Capital, Revenue Allocation, Grant Fund">
+            <label>Datewise Budget Decisions</label>
+            <textarea id="p4-decision" placeholder="Sanctions, modifications, revisions..."></textarea>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <div>
+                    <label>Budget Receive Date</label>
+                    <input type="date" id="p4-recDate">
+                </div>
+                <div>
+                    <label>Amount Received</label>
+                    <input type="number" id="p4-amount" placeholder="0.00">
+                </div>
+            </div>
+
+            <button class="btn btn-success" onclick="commitP4Log()">Commit Budget Log Row</button>
+            <div id="p4-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
+
+            <div class="btn-footer-nav">
+                <button class="btn btn-secondary" onclick="switchView('view-wizard-p3')">← Previous</button>
+                <button class="btn" onclick="switchView('view-wizard-p5')">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-wizard-p5" class="app-view">
+        <div class="wizard-progress">
+            <span class="wizard-step">1. Metadata</span>
+            <span class="wizard-step">2. Logs & Decisions</span>
+            <span class="wizard-step">3. Layouts & Drawings</span>
+            <span class="wizard-step">4. Budgets</span>
+            <span class="wizard-step current">5. Tenders</span>
+        </div>
+        <div class="box">
+            <div class="box-title">Step 5: Tendering & Procurement Records</div>
+            <label>Log Entry Date</label>
+            <input type="date" id="p5-date">
+            <label>Tender ID</label>
+            <input type="text" id="p5-tenderId" placeholder="e.g., IUT/TND-2026-A">
+            <label>Datewise Tender Info with APP Info</label>
+            <textarea id="p5-appInfo" placeholder="Annual Procurement Plan line-item connection context..."></textarea>
+            
+            <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+                <div>
+                    <label>Approved Date</label>
+                    <input type="date" id="p5-appDate">
+                </div>
+                <div>
+                    <label>Winning Bidder</label>
+                    <input type="text" id="p5-bidder" placeholder="Vendor Name">
+                </div>
+                <div>
+                    <label>Value</label>
+                    <input type="number" id="p5-value" placeholder="Contract Worth">
+                </div>
+            </div>
+
+            <button class="btn btn-success" onclick="commitP5Log()">Commit Tender Log Row</button>
+            <div id="p5-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
+
+            <div class="btn-footer-nav">
+                <button class="btn btn-secondary" onclick="switchView('view-wizard-p4')">← Previous</button>
+                <button class="btn btn-success" onclick="navigateToHome()">Finish & Save Record ✓</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // App Memory Architecture Configuration
-    let diaryData = JSON.parse(localStorage.getItem('minhaj_civil_diary')) || [];
-    let selectedProjId = null;
+    let database = JSON.parse(localStorage.getItem('wizard_diary_data')) || [];
+    let currentWorkingProjId = null; 
+    let isEditingExistingMode = false;
 
     window.onload = function() {
         renderMasterDatabase();
     };
 
-    // Database Actions: Project Metadata Operations
-    function saveProject() {
-        const id = document.getElementById('projId').value.trim();
-        const fy = document.getElementById('projFy').value.trim();
-        const name = document.getElementById('projName').value.trim();
-        const details = document.getElementById('projDetails').value.trim();
-        const editIdx = document.getElementById('editProjIdx').value;
+    function switchView(viewId) {
+        document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        window.scrollTo(0,0);
+        
+        if(viewId === 'view-wizard-p2') renderSubTablesPage2();
+        if(viewId === 'view-wizard-p3') renderSubTablesPage3();
+        if(viewId === 'view-wizard-p4') renderSubTablesPage4();
+        if(viewId === 'view-wizard-p5') renderSubTablesPage5();
+    }
 
-        if(!id || !fy || !name) { return alert("Mandatory Data Key Missing: Project ID, FY, and Name must be defined."); }
-
-        if(editIdx !== "") {
-            // Update operation
-            diaryData[editIdx].id = id;
-            diaryData[editIdx].fy = fy;
-            diaryData[editIdx].name = name;
-            diaryData[editIdx].details = details;
-        } else {
-            // Check uniqueness constraints
-            if(diaryData.some(p => p.id.toLowerCase() === id.toLowerCase())) {
-                return alert("Integrity Violation: Project ID must be completely unique.");
-            }
-            diaryData.push({ id, fy, name, details, logs: [] });
-        }
-
-        syncStorage();
-        resetProjectForm();
+    function navigateToHome() {
+        currentWorkingProjId = null;
+        isEditingExistingMode = false;
         renderMasterDatabase();
+        switchView('view-home');
     }
 
-    function editProjectMeta(index) {
-        const p = diaryData[index];
-        document.getElementById('editProjIdx').value = index;
-        document.getElementById('projId').value = p.id;
-        document.getElementById('projFy').value = p.fy;
-        document.getElementById('projName').value = p.name;
-        document.getElementById('projDetails').value = p.details;
-
-        document.getElementById('projFormTitle').innerText = "Modify Project Metadata";
-        document.getElementById('clearProjBtn').style.display = "inline-block";
-        window.scrollTo({top: 0, behavior: 'smooth'});
+    function startNewProjectWizard() {
+        currentWorkingProjId = null;
+        isEditingExistingMode = false;
+        
+        document.getElementById('w-projId').disabled = false;
+        document.getElementById('w-projId').value = "";
+        document.getElementById('w-projFy').value = "";
+        document.getElementById('w-projName').value = "";
+        document.getElementById('w-projDetails').value = "";
+        
+        clearPageFormFields();
+        switchView('view-wizard-p1');
     }
 
-    function deleteProjectMeta(index) {
-        if(confirm("Confirm action? Completely purge project database file and all inner execution logs?")) {
-            if(selectedProjId === diaryData[index].id) cancelLogEditing();
-            diaryData.splice(index, 1);
-            syncStorage();
+    function saveP1AndNext() {
+        const id = document.getElementById('w-projId').value.trim();
+        const fy = document.getElementById('w-projFy').value.trim();
+        const name = document.getElementById('w-projName').value.trim();
+        const details = document.getElementById('w-projDetails').value.trim();
+
+        if(!id || !fy || !name) return alert("Error: Fields marked with * are required.");
+
+        if(!isEditingExistingMode) {
+            if(database.some(p => p.id.toLowerCase() === id.toLowerCase())) {
+                return alert("Primary Key Conflict: This Project ID already exists.");
+            }
+            let targetObj = { id, fy, name, details, plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[] };
+            database.push(targetObj);
+            currentWorkingProjId = id;
+            isEditingExistingMode = true; 
+        } else {
+            let idx = database.findIndex(p => p.id === currentWorkingProjId);
+            if(idx !== -1) {
+                database[idx].fy = fy;
+                database[idx].name = name;
+                database[idx].details = details;
+            }
+        }
+        syncMemory();
+        switchView('view-wizard-p2');
+    }
+
+    function getCurrentProjectRef() {
+        return database.find(p => p.id === currentWorkingProjId);
+    }
+
+    function commitP2Log() {
+        const p = getCurrentProjectRef();
+        const d = document.getElementById('p2-date').value;
+        if(!d) return alert("Select an entry log target date.");
+
+        const planText = document.getElementById('p2-plan').value;
+        const decText = document.getElementById('p2-decision').value;
+        const workText = document.getElementById('p2-work').value;
+        const probText = document.getElementById('p2-problem').value;
+        const discText = document.getElementById('p2-solDisc').value;
+        const implText = document.getElementById('p2-solImpl').value;
+
+        if(planText) p.plans.push({ id: 'L-'+Date.now(), date: d, text: planText });
+        if(decText || workText) p.decisions.push({ id: 'L-'+Date.now(), date: d, decision: decText, work: workText });
+        if(probText || discText || implText) p.problems.push({ id: 'L-'+Date.now(), date: d, problem: probText, discussed: discText, implemented: implText });
+
+        syncMemory();
+        clearPageFormFields();
+        renderSubTablesPage2();
+    }
+
+    function commitP3Log() {
+        const p = getCurrentProjectRef();
+        const d = document.getElementById('p3-date').value;
+        if(!d) return alert("Select an entry log target date.");
+
+        p.layouts.push({
+            id: 'L-'+Date.now(), date: d,
+            draft: document.getElementById('p3-draft').value,
+            note: document.getElementById('p3-note').value
+        });
+
+        syncMemory();
+        clearPageFormFields();
+        renderSubTablesPage3();
+    }
+
+    function commitP4Log() {
+        const p = getCurrentProjectRef();
+        const d = document.getElementById('p4-date').value;
+        if(!d) return alert("Select an entry log target date.");
+
+        p.budgets.push({
+            id: 'L-'+Date.now(), date: d,
+            type: document.getElementById('p4-type').value,
+            decision: document.getElementById('p4-decision').value,
+            recDate: document.getElementById('p4-recDate').value,
+            amount: document.getElementById('p4-amount').value
+        });
+
+        syncMemory();
+        clearPageFormFields();
+        renderSubTablesPage4();
+    }
+
+    function commitP5Log() {
+        const p = getCurrentProjectRef();
+        const d = document.getElementById('p5-date').value;
+        if(!d) return alert("Select an entry log target date.");
+
+        p.tenders.push({
+            id: 'L-'+Date.now(), date: d,
+            tenderId: document.getElementById('p5-tenderId').value,
+            appInfo: document.getElementById('p5-appInfo').value,
+            appDate: document.getElementById('p5-appDate').value,
+            bidder: document.getElementById('p5-bidder').value,
+            value: document.getElementById('p5-value').value
+        });
+
+        syncMemory();
+        clearPageFormFields();
+        renderSubTablesPage5();
+    }
+
+    function removeSubRow(arrayName, rowId, pageViewRefresh) {
+        if(confirm("Erase entry row context?")) {
+            const p = getCurrentProjectRef();
+            p[arrayName] = p[arrayName].filter(r => r.id !== rowId);
+            syncMemory();
+            switchView(pageViewRefresh);
+        }
+    }
+
+    function renderSubTablesPage2() {
+        const p = getCurrentProjectRef();
+        let html = `<h4>Current Operational Logs:</h4>`;
+        html += `<table class="db-table"><tr><th>Type</th><th>Date</th><th>Logged Value</th><th>Action</th></tr>`;
+        p.plans.forEach(r => html += `<tr><td>Plan</td><td>${r.date}</td><td>${r.text}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('plans','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
+        p.decisions.forEach(r => html += `<tr><td>Decision</td><td>${r.date}</td><td><strong>Decision:</strong> ${r.decision}<br><strong>Work:</strong> ${r.work}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('decisions','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
+        p.problems.forEach(r => html += `<tr><td>Problem</td><td>${r.date}</td><td><strong>Problem:</strong> ${r.problem}<br><strong>Solutions:</strong> ${r.discussed || r.implemented}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('problems','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
+        html += `</table>`;
+        document.getElementById('p2-running-table-container').innerHTML = (p.plans.length + p.decisions.length + p.problems.length === 0) ? "" : html;
+    }
+
+    function renderSubTablesPage3() {
+        const p = getCurrentProjectRef();
+        let html = `<table class="db-table"><tr><th>Date</th><th>Draft Layout</th><th>Note sent</th><th>Action</th></tr>`;
+        p.layouts.forEach(r => html += `<tr><td>${r.date}</td><td>${r.draft}</td><td>${r.note}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('layouts','${r.id}','view-wizard-p3')">&times;</button></td></tr>`);
+        html += `</table>`;
+        document.getElementById('p3-running-table-container').innerHTML = p.layouts.length === 0 ? "" : html;
+    }
+
+    // Live Sub-tables rendering for Data verification inside wizard forms
+    function renderSubTablesPage4() {
+        const p = getCurrentProjectRef();
+        let html = `<table class="db-table"><tr><th>Date</th><th>Type</th><th>Decision</th><th>Received Date</th><th>Amount</th><th>Action</th></tr>`;
+        p.budgets.forEach(r => html += `<tr><td>${r.date}</td><td>${r.type}</td><td>${r.decision}</td><td>${r.recDate}</td><td>${Number(r.amount).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('budgets','${r.id}','view-wizard-p4')">&times;</button></td></tr>`);
+        html += `</table>`;
+        document.getElementById('p4-running-table-container').innerHTML = p.budgets.length === 0 ? "" : html;
+    }
+
+    function renderSubTablesPage5() {
+        const p = getCurrentProjectRef();
+        let html = `<table class="db-table"><tr><th>Date</th><th>Tender ID</th><th>Info / APP</th><th>Approved Date</th><th>Winner</th><th>Value</th><th>Action</th></tr>`;
+        p.tenders.forEach(r => html += `<tr><td>${r.date}</td><td>${r.tenderId}</td><td>${r.appInfo}</td><td>${r.appDate}</td><td>${r.bidder}</td><td>${Number(r.value).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('tenders','${r.id}','view-wizard-p5')">&times;</button></td></tr>`);
+        html += `</table>`;
+        document.getElementById('p5-running-table-container').innerHTML = p.tenders.length === 0 ? "" : html;
+    }
+
+    function editEntireProjectRoute(id) {
+        currentWorkingProjId = id;
+        isEditingExistingMode = true;
+        const p = database.find(proj => proj.id === id);
+
+        document.getElementById('w-projId').disabled = true;
+        document.getElementById('w-projId').value = p.id;
+        document.getElementById('w-projFy').value = p.fy;
+        document.getElementById('w-projName').value = p.name;
+        document.getElementById('w-projDetails').value = p.details || '';
+
+        switchView('view-wizard-p1');
+    }
+
+    function deleteEntireProject(id) {
+        if(confirm("Completely wipe this structural dataset record from storage?")) {
+            database = database.filter(p => p.id !== id);
+            syncMemory();
             renderMasterDatabase();
         }
     }
 
-    function resetProjectForm() {
-        document.getElementById('editProjIdx').value = "";
-        document.getElementById('projId').value = "";
-        document.getElementById('projFy').value = "";
-        document.getElementById('projName').value = "";
-        document.getElementById('projDetails').value = "";
-        document.getElementById('projFormTitle').innerText = "Create New Project";
-        document.getElementById('clearProjBtn').style.display = "none";
-    }
-
-    // Context Logging Processing Functions
-    function activateLogSession(projId) {
-        selectedProjId = projId;
-        document.getElementById('logFormBox').style.display = "block";
-        document.getElementById('logFormTitle').innerText = `Log Management: [${projId}]`;
-        cancelLogFields();
-        renderMasterDatabase();
-        document.getElementById('logFormBox').scrollIntoView({behavior: 'smooth'});
-    }
-
-    function switchLogFormFields() {
-        const cat = document.getElementById('logCategory').value;
-        document.querySelectorAll('.log-fields-block').forEach(b => b.style.display = 'none');
-        document.getElementById(`f-${cat}`).style.display = 'block';
-    }
-
-    function saveLogEntry() {
-        if(!selectedProjId) return alert("Select active targeted project to map database entry.");
-        const pIdx = diaryData.findIndex(p => p.id === selectedProjId);
-        if(pIdx === -1) return;
-
-        const cat = document.getElementById('logCategory').value;
-        const date = document.getElementById('logDate').value;
-        const editLogId = document.getElementById('editLogId').value;
-
-        if(!date) return alert("Select standard entry date record.");
-
-        let payload = { id: editLogId || 'L-'+Date.now(), category: cat, date: date };
-
-        // Read dynamic schemas
-        if(cat === 'plan') {
-            payload.planText = document.getElementById('planText').value;
-        } else if(cat === 'decision') {
-            payload.decisionText = document.getElementById('decisionText').value;
-            payload.decisionWorkText = document.getElementById('decisionWorkText').value;
-        } else if(cat === 'problem') {
-            payload.problemText = document.getElementById('problemText').value;
-            payload.solDiscussed = document.getElementById('solDiscussed').value;
-            payload.solImplemented = document.getElementById('solImplemented').value;
-        } else if(cat === 'layout') {
-            payload.layoutDraftText = document.getElementById('layoutDraftText').value;
-            payload.layoutNoteText = document.getElementById('layoutNoteText').value;
-        } else if(cat === 'budget') {
-            payload.budgetType = document.getElementById('budgetType').value;
-            payload.budgetDecision = document.getElementById('budgetDecision').value;
-            payload.budgetRecDate = document.getElementById('budgetRecDate').value;
-            payload.budgetAmount = document.getElementById('budgetAmount').value;
-        } else if(cat === 'tender') {
-            payload.tenderId = document.getElementById('tenderId').value;
-            payload.tenderAppInfo = document.getElementById('tenderAppInfo').value;
-            payload.tenderAppDate = document.getElementById('tenderAppDate').value;
-            payload.tenderBidder = document.getElementById('tenderBidder').value;
-            payload.tenderValue = document.getElementById('tenderValue').value;
-        }
-
-        if(editLogId) {
-            // Edit existing entry row inside array
-            const lIdx = diaryData[pIdx].logs.findIndex(l => l.id === editLogId);
-            if(lIdx !== -1) diaryData[pIdx].logs[lIdx] = payload;
-        } else {
-            // Append entry row
-            diaryData[pIdx].logs.push(payload);
-        }
-
-        syncStorage();
-        cancelLogFields();
-        renderMasterDatabase();
-    }
-
-    function editLogEntryRow(projId, logId) {
-        selectedProjId = projId;
-        const p = diaryData.find(proj => proj.id === projId);
-        const log = p.logs.find(l => l.id === logId);
-
-        document.getElementById('logFormBox').style.display = "block";
-        document.getElementById('logFormTitle').innerText = `Updating Log on [${projId}]`;
-        document.getElementById('editLogId').value = log.id;
-        document.getElementById('logCategory').value = log.category;
-        document.getElementById('logDate').value = log.date;
-
-        switchLogFormFields();
-
-        if(log.category === 'plan') {
-            document.getElementById('planText').value = log.planText || '';
-        } else if(log.category === 'decision') {
-            document.getElementById('decisionText').value = log.decisionText || '';
-            document.getElementById('decisionWorkText').value = log.decisionWorkText || '';
-        } else if(log.category === 'problem') {
-            document.getElementById('problemText').value = log.problemText || '';
-            document.getElementById('solDiscussed').value = log.solDiscussed || '';
-            document.getElementById('solImplemented').value = log.solImplemented || '';
-        } else if(log.category === 'layout') {
-            document.getElementById('layoutDraftText').value = log.layoutDraftText || '';
-            document.getElementById('layoutNoteText').value = log.layoutNoteText || '';
-        } else if(log.category === 'budget') {
-            document.getElementById('budgetType').value = log.budgetType || '';
-            document.getElementById('budgetDecision').value = log.budgetDecision || '';
-            document.getElementById('budgetRecDate').value = log.budgetRecDate || '';
-            document.getElementById('budgetAmount').value = log.budgetAmount || '';
-        } else if(log.category === 'tender') {
-            document.getElementById('tenderId').value = log.tenderId || '';
-            document.getElementById('tenderAppInfo').value = log.tenderAppInfo || '';
-            document.getElementById('tenderAppDate').value = log.tenderAppDate || '';
-            document.getElementById('tenderBidder').value = log.tenderBidder || '';
-            document.getElementById('tenderValue').value = log.tenderValue || '';
-        }
-
-        document.getElementById('logFormBox').scrollIntoView({behavior: 'smooth'});
-        renderMasterDatabase();
-    }
-
-    function deleteLogEntryRow(projId, logId) {
-        if(confirm("Permanently erase selected log data entry row?")) {
-            const pIdx = diaryData.findIndex(p => p.id === projId);
-            if(pIdx !== -1) {
-                diaryData[pIdx].logs = diaryData[pIdx].logs.filter(l => l.id !== logId);
-                syncStorage();
-                renderMasterDatabase();
-            }
-        }
-    }
-
-    function cancelLogFields() {
-        document.getElementById('editLogId').value = "";
-        document.getElementById('logDate').value = "";
-        document.querySelectorAll('.log-fields-block textarea, .log-fields-block input').forEach(el => el.value = "");
-    }
-
-    function cancelLogEditing() {
-        selectedProjId = null;
-        document.getElementById('logFormBox').style.display = "none";
-        cancelLogFields();
-        renderMasterDatabase();
-    }
-
-    function syncStorage() {
-        localStorage.setItem('minhaj_civil_diary', JSON.stringify(diaryData));
-    }
-
-    // MASTER ENGINE: DATA RENDERER DISPLAY (TABULAR VIEW)
     function renderMasterDatabase() {
         const out = document.getElementById('masterDbContainer');
         out.innerHTML = "";
 
-        if(diaryData.length === 0) {
-            out.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-weight:bold; padding:20px;">No operational logs or projects parsed in LocalStorage.</p>`;
+        if(database.length === 0) {
+            out.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px; font-weight:bold;">No log data rows found.</p>`;
             return;
         }
 
-        // Group structural keys by FY descending
         let grouped = {};
-        diaryData.forEach((p, idx) => {
+        database.forEach(p => {
             if(!grouped[p.fy]) grouped[p.fy] = [];
-            grouped[p.fy].push({proj: p, originalIndex: idx});
+            grouped[p.fy].push(p);
         });
 
-        const sortedYears = Object.keys(grouped).sort().reverse();
-
-        sortedYears.forEach(fy => {
+        Object.keys(grouped).sort().reverse().forEach(fy => {
             let section = document.createElement('div');
             section.innerHTML = `<div class="year-header">Financial Year: ${fy}</div>`;
 
-            grouped[fy].forEach(item => {
-                const p = item.proj;
-                const idx = item.originalIndex;
-                const isSelected = (selectedProjId === p.id);
-
+            grouped[fy].forEach(p => {
                 let card = document.createElement('div');
-                card.className = `project-card ${isSelected ? 'active-project-highlight' : ''}`;
-
-                // Parse Categorical Database Sub-Arrays
-                const plans = p.logs.filter(l => l.category === 'plan');
-                const decisions = p.logs.filter(l => l.category === 'decision');
-                const problems = p.logs.filter(l => l.category === 'problem');
-                const layouts = p.logs.filter(l => l.category === 'layout');
-                const budgets = p.logs.filter(l => l.category === 'budget');
-                const tenders = p.logs.filter(l => l.category === 'tender');
-
+                card.className = 'project-card';
                 card.innerHTML = `
                     <div class="project-summary">
                         <div>
-                            <strong style="color:var(--accent); font-size:1rem;">[${p.id}]</strong> 
-                            <span style="font-weight:600; margin-left:5px;">${p.name}</span>
+                            <strong style="color:var(--accent);">[${p.id}]</strong> — <span style="font-weight:600;">${p.name}</span>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-success" onclick="activateLogSession('${p.id}')">Manage Logs</button>
-                            <button class="btn btn-sm" onclick="editProjectMeta(${idx})">Edit Meta</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteProjectMeta(${idx})">Delete</button>
+                            <button class="btn btn-sm" onclick="editEntireProjectRoute('${p.id}')">Edit / Add Logs</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteEntireProject('${p.id}')">Delete Project</button>
                         </div>
                     </div>
                     <div class="project-details-area">
-                        <p style="margin-top:0;"><strong>Project Baseline Details:</strong> ${p.details || 'No baseline structural details declared.'}</p>
+                        <p style="margin-top:0;"><strong>Baseline Scope:</strong> ${p.details || 'N/A'}</p>
                         
-                        <h4 style="margin: 10px 0 5px; color:var(--accent-light);">1. Datewise Plans</h4>
-                        ${plans.length === 0 ? '<p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 10px 0;">No logs entered.</p>' : `
+                        ${p.plans.length === 0 ? '' : `
+                            <h5 style="color:var(--accent-light); margin:5px 0;">1. Execution Plans</h5>
                             <table class="db-table">
-                                <tr><th style="width:15%">Date</th><th>Plan Details Summary</th><th style="width:12%">Actions</th></tr>
-                                ${plans.map(l => `
-                                    <tr>
-                                        <td><strong>${l.date}</strong></td>
-                                        <td>${l.planText || ''}</td>
-                                        <td>
-                                            <button class="btn btn-sm" onclick="editLogEntryRow('${p.id}','${l.id}')">Edit</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteLogEntryRow('${p.id}','${l.id}')">&times;</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                                ${p.plans.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td>${l.text}</td></tr>`).join('')}
                             </table>
                         `}
 
-                        <h4 style="margin: 10px 0 5px; color:var(--accent-light);">2. Datewise Decisions & Works Execution</h4>
-                        ${decisions.length === 0 ? '<p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 10px 0;">No logs entered.</p>' : `
+                        ${p.decisions.length === 0 ? '' : `
+                            <h5 style="color:var(--accent-light); margin:5px 0;">2. Decisions &amp; Executed Works</h5>
                             <table class="db-table">
-                                <tr><th style="width:15%">Date</th><th>Important Decisions</th><th>Sub-Part: Execution details</th><th style="width:12%">Actions</th></tr>
-                                ${decisions.map(l => `
-                                    <tr>
-                                        <td><strong>${l.date}</strong></td>
-                                        <td>${l.decisionText || ''}</td>
-                                        <td style="background:#f8fafc;">${l.decisionWorkText || '<i>No matching execution row.</i>'}</td>
-                                        <td>
-                                            <button class="btn btn-sm" onclick="editLogEntryRow('${p.id}','${l.id}')">Edit</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteLogEntryRow('${p.id}','${l.id}')">&times;</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                                ${p.decisions.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Decision:</strong> ${l.decision}<br><small><strong>Executed:</strong> ${l.work}</small></td></tr>`).join('')}
                             </table>
                         `}
 
-                        <h4 style="margin: 10px 0 5px; color:var(--accent-light);">3. Datewise Impediments & Engineering Solutions</h4>
-                        ${problems.length === 0 ? '<p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 10px 0;">No logs entered.</p>' : `
+                        ${p.problems.length === 0 ? '' : `
+                            <h5 style="color:var(--danger); margin:5px 0;">3. Bottlenecks &amp; Countermeasures</h5>
                             <table class="db-table">
-                                <tr><th style="width:15%">Date</th><th>Problems / Risks Faced</th><th>Solutions Discussed</th><th>Solutions Implemented</th><th style="width:12%">Actions</th></tr>
-                                ${problems.map(l => `
-                                    <tr>
-                                        <td><strong>${l.date}</strong></td>
-                                        <td><span style="color:var(--danger); font-weight:500;">${l.problemText || ''}</span></td>
-                                        <td>${l.solDiscussed || ''}</td>
-                                        <td style="background:#f0fff4; color:var(--success); font-weight:500;">${l.solImplemented || ''}</td>
-                                        <td>
-                                            <button class="btn btn-sm" onclick="editLogEntryRow('${p.id}','${l.id}')">Edit</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteLogEntryRow('${p.id}','${l.id}')">&times;</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                                ${p.problems.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><span style="color:var(--danger)"><strong>Obstacle:</strong> ${l.problem}</span><br><small><strong>Discussed:</strong> ${l.discussed} | <strong>Implemented:</strong> ${l.implemented}</small></td></tr>`).join('')}
                             </table>
                         `}
 
-                        <h4 style="margin: 10px 0 5px; color:var(--accent-light);">4. Layout & Design Committee Tracking</h4>
-                        ${layouts.length === 0 ? '<p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 10px 0;">No logs entered.</p>' : `
+                        ${p.layouts.length === 0 ? '' : `
+                            <h5 style="color:var(--accent-light); margin:5px 0;">4. Layout Status Logs</h5>
                             <table class="db-table">
-                                <tr><th style="width:15%">Date</th><th>Draft Layout Details</th><th>Notes Despatched to Committee</th><th style="width:12%">Actions</th></tr>
-                                ${layouts.map(l => `
-                                    <tr>
-                                        <td><strong>${l.date}</strong></td>
-                                        <td>${l.layoutDraftText || ''}</td>
-                                        <td>${l.layoutNoteText || ''}</td>
-                                        <td>
-                                            <button class="btn btn-sm" onclick="editLogEntryRow('${p.id}','${l.id}')">Edit</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteLogEntryRow('${p.id}','${l.id}')">&times;</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                                ${p.layouts.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Draft:</strong> ${l.draft}<br><small><strong>Layout Committee Note:</strong> ${l.note}</small></td></tr>`).join('')}
                             </table>
                         `}
 
-                        <h4 style="margin: 10px 0 5px; color:var(--success);">5. Budget Related Database Matrix</h4>
-                        ${budgets.length === 0 ? '<p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 10px 0;">No logs entered.</p>' : `
-                            <table class="db-table" style="border: 1px solid #c6f6d5;">
-                                <tr style="background:#e6fffa;"><th style="width:12%">Date</th><th style="width:15%">Budget Type</th><th>Datewise Budget Decisions Log</th><th style="width:15%">Rec. Date</th><th style="width:15%">Amount</th><th style="width:12%">Actions</th></tr>
-                                ${budgets.map(l => `
-                                    <tr>
-                                        <td><strong>${l.date}</strong></td>
-                                        <td><mark style="background:#feebc8; padding:2px 4px; border-radius:3px;">${l.budgetType || 'N/A'}</mark></td>
-                                        <td>${l.budgetDecision || ''}</td>
-                                        <td>${l.budgetRecDate || 'N/A'}</td>
-                                        <td style="font-weight:700; color:var(--success); text-align:right;">${l.budgetAmount ? Number(l.budgetAmount).toLocaleString() : '0'}</td>
-                                        <td>
-                                            <button class="btn btn-sm" onclick="editLogEntryRow('${p.id}','${l.id}')">Edit</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteLogEntryRow('${p.id}','${l.id}')">&times;</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                        ${p.budgets.length === 0 ? '' : `
+                            <h5 style="color:var(--success); margin:5px 0;">5. Budget Framework Ledger</h5>
+                            <table class="db-table">
+                                ${p.budgets.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Type:</strong> ${l.type} | <strong>Decision:</strong> ${l.decision} | <strong>Received:</strong> ${l.recDate} | <strong>Value:</strong> $${Number(l.amount).toLocaleString()}</td></tr>`).join('')}
                             </table>
                         `}
 
-                        <h4 style="margin: 10px 0 5px; color:var(--warning);">6. Tender Procurement Ledger Records</h4>
-                        ${tenders.length === 0 ? '<p style="color:var(--text-muted); font-size:0.8rem; margin:0px;">No logs entered.</p>' : `
-                            <table class="db-table" style="border: 1px solid #feebc8;">
-                                <tr style="background:#fffaf0;"><th style="width:12%">Date</th><th style="width:15%">Tender ID</th><th>Info & APP Scope Details</th><th style="width:12%">Approved Date</th><th>Winning Bidder</th><th style="width:12%">Contract Value</th><th style="width:12%">Actions</th></tr>
-                                ${tenders.map(l => `
-                                    <tr>
-                                        <td><strong>${l.date}</strong></td>
-                                        <td><code>${l.tenderId || 'N/A'}</code></td>
-                                        <td>${l.tenderAppInfo || ''}</td>
-                                        <td>${l.tenderAppDate || 'N/A'}</td>
-                                        <td><strong>${l.tenderBidder || 'N/A'}</strong></td>
-                                        <td style="font-weight:700; color:var(--warning); text-align:right;">${l.tenderValue ? Number(l.tenderValue).toLocaleString() : '0'}</td>
-                                        <td>
-                                            <button class="btn btn-sm" onclick="editLogEntryRow('${p.id}','${l.id}')">Edit</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deleteLogEntryRow('${p.id}','${l.id}')">&times;</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
+                        ${p.tenders.length === 0 ? '' : `
+                            <h5 style="color:var(--warning); margin:5px 0;">6. Tender Ledger Matrix</h5>
+                            <table class="db-table">
+                                ${p.tenders.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Tender ID:</strong> <code>${l.tenderId}</code><br><small><strong>APP Scope Info:</strong> ${l.appInfo} <br> <strong>Approved:</strong> ${l.appDate} | <strong>Awardee:</strong> ${l.bidder} | <strong>Value:</strong> $${Number(l.value).toLocaleString()}</small></td></tr>`).join('')}
                             </table>
                         `}
                     </div>
@@ -679,7 +713,18 @@
             out.appendChild(section);
         });
     }
-</script>
 
+    function clearPageFormFields() {
+        document.querySelectorAll('.app-view input, .app-view textarea').forEach(el => {
+            if(el.id !== 'w-projId' && el.id !== 'w-projFy' && el.id !== 'w-projName' && el.id !== 'w-projDetails') {
+                el.value = "";
+            }
+        });
+    }
+
+    function syncMemory() {
+        localStorage.setItem('wizard_diary_data', JSON.stringify(database));
+    }
+</script>
 </body>
 </html>
