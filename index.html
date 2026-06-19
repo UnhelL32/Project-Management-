@@ -61,7 +61,6 @@
             padding-bottom: 8px;
         }
 
-        /* --- NEW AESTHETIC RESPONSIVE WIZARD PROGRESS BAR --- */
         .wizard-progress {
             display: flex;
             flex-wrap: wrap;
@@ -88,31 +87,23 @@
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
-            transition: all 0.3s ease;
         }
 
         .wizard-step.current {
             color: #ffffff;
             background: var(--accent-light);
             border-color: var(--accent-light);
-            box-shadow: 0 2px 4px rgba(43, 108, 176, 0.2);
         }
 
         @media (max-width: 600px) {
-            .wizard-progress {
-                gap: 6px;
-                padding: 6px;
-            }
+            .wizard-progress { gap: 6px; padding: 6px; }
             .wizard-step {
-                flex: 1 1 calc(50% - 6px); /* 2 blocks per row on very narrow screens */
+                flex: 1 1 calc(50% - 6px);
                 font-size: 0.7rem;
                 padding: 8px 4px;
             }
-            .wizard-step:last-child:nth-child(odd) {
-                flex: 1 1 100%; /* let the odd last item span full width */
-            }
+            .wizard-step:last-child:nth-child(odd) { flex: 1 1 100%; }
         }
-        /* ---------------------------------------------------- */
 
         .sub-box {
             border-left: 3px solid var(--accent-light);
@@ -130,7 +121,6 @@
             color: var(--text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         input, textarea, select {
@@ -142,11 +132,6 @@
             font-size: 0.95rem;
             box-sizing: border-box;
             background: #fafafa;
-        }
-        input:focus, textarea:focus, select:focus {
-            background: #fff;
-            border-color: var(--accent-light);
-            outline: none;
         }
         textarea { min-height: 80px; resize: vertical; }
 
@@ -168,16 +153,18 @@
             cursor: pointer;
             color: #fff;
             background-color: var(--accent-light);
-            transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .btn:hover { opacity: 0.9; }
         .btn-danger { background-color: var(--danger); }
         .btn-success { background-color: var(--success); }
         .btn-secondary { background-color: #718096; }
-        .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
         .btn-block { width: 100%; padding: 12px; font-size: 1rem; }
 
-        /* DB Tables layout */
+        /* DB Matrix Styles */
         .year-header {
             background: var(--accent);
             color: #fff;
@@ -200,18 +187,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
             flex-wrap: wrap;
             gap: 10px;
         }
-        .project-details-area { padding: 15px; overflow-x: auto; }
+        .project-meta-info { font-size: 0.95rem; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
         
         .db-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-size: 0.85rem;
-            min-width: 500px; /* Forces scroll container context instead of squishing text */
         }
         .db-table th {
             background: #e2e8f0;
@@ -222,6 +208,51 @@
         }
         .db-table td { padding: 8px 10px; border: 1px solid var(--border-color); vertical-align: top; }
         .db-table tr:nth-child(even) { background: #f7fafc; }
+        .table-responsive { overflow-x: auto; width: 100%; }
+        
+        .detail-section-title {
+            color: var(--accent-light);
+            border-left: 4px solid var(--accent-light);
+            padding-left: 10px;
+            margin: 25px 0 10px 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        /* GDrive Dynamic Component CSS */
+        .gdrive-link-badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-decoration: none;
+            margin-top: 5px;
+            border: 1px solid #d2e3fc;
+        }
+        .gdrive-link-badge:hover { background: #d2e3fc; }
+
+        .link-container-wrapper {
+            background: #f8fafc;
+            border: 1px dashed var(--border-color);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        /* Print Engine Overrides */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            header, .btn, .wizard-progress, .btn-footer-nav, .gdrive-input-box-area { display: none !important; }
+            .box { border: none; box-shadow: none; padding: 0; }
+            .detail-section-title { border-left-color: #000; color: #000; page-break-after: avoid; }
+            .db-table th { background: #f0f0f0 !important; color: #000; }
+            .project-card { border: none; page-break-inside: avoid; }
+            .app-view { display: none !important; }
+            #view-full-details { display: block !important; }
+        }
     </style>
 </head>
 <body>
@@ -233,11 +264,36 @@
     </header>
 
     <div id="view-home" class="app-view active">
+        <div class="box" style="background: #edf2f7; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 15px;">
+            <div style="font-size:0.9rem; font-weight:600; color:var(--accent);">Database Backup &amp; Migration Utilities:</div>
+            <div class="btn-group">
+                <button class="btn btn-sm" onclick="exportDataToCSV()">📥 Export Master CSV</button>
+                <label class="btn btn-sm btn-success" style="margin:0; cursor:pointer;">
+                    📤 Import CSV File <input type="file" id="csv-file-importer" accept=".csv" style="display:none;" onchange="importDataFromCSV(event)">
+                </label>
+            </div>
+        </div>
+
         <div class="box">
             <div class="box-title">Master Project Database (Yearwise Summary)</div>
             <div id="masterDbContainer"></div>
         </div>
         <button class="btn btn-success btn-block" onclick="startNewProjectWizard()">＋ Create New Project Entry Record</button>
+    </div>
+
+    <div id="view-full-details" class="app-view">
+        <div class="box">
+            <div class="box-title" style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="details-page-title">Project Deep-Dive Records</span>
+                <button class="btn btn-sm btn-success" onclick="window.print()">🖨️ Print Project Dossier</button>
+            </div>
+            
+            <div id="fullDetailsRenderContainer"></div>
+
+            <div class="btn-footer-nav">
+                <button class="btn btn-secondary" onclick="navigateToHome()">← Back to Homepage Database</button>
+            </div>
+        </div>
     </div>
 
     <div id="view-wizard-p1" class="app-view">
@@ -259,9 +315,15 @@
             <label>Details of Project</label>
             <textarea id="w-projDetails" placeholder="Scope details, measurements, geo-locations..."></textarea>
             
+            <div class="link-container-wrapper gdrive-input-box-area">
+                <label style="color:var(--accent-light);">Link Google Drive Reference Documents (Unlimited)</label>
+                <div id="p1-links-list"></div>
+                <button class="btn btn-sm" type="button" onclick="addNewDriveLinkInputRow('p1-links-list')">＋ Attach Drive Link</button>
+            </div>
+
             <div class="btn-footer-nav">
                 <button class="btn btn-secondary" onclick="navigateToHome()">← Return Home</button>
-                <button class="btn" onclick="saveP1AndNext()">Next Page →</button>
+                <button class="btn" onclick="saveP1AndNext()">Next Page (Logs) →</button>
             </div>
         </div>
     </div>
@@ -298,12 +360,18 @@
                 <textarea id="p2-solImpl" placeholder="Final countermeasure deployment details..."></textarea>
             </div>
 
+            <div class="link-container-wrapper gdrive-input-box-area">
+                <label style="color:var(--accent-light);">Attach Google Drive Docs/Images to this Log Entry</label>
+                <div id="p2-links-list"></div>
+                <button class="btn btn-sm" type="button" onclick="addNewDriveLinkInputRow('p2-links-list')">＋ Attach Drive Link</button>
+            </div>
+
             <button class="btn btn-success" onclick="commitP2Log()">Commit Dynamic Log Row</button>
             <div id="p2-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
 
             <div class="btn-footer-nav">
                 <button class="btn btn-secondary" onclick="switchView('view-wizard-p1')">← Previous</button>
-                <button class="btn" onclick="switchView('view-wizard-p3')">Next →</button>
+                <button class="btn" onclick="switchView('view-wizard-p3')">Next Page (Design) →</button>
             </div>
         </div>
     </div>
@@ -325,12 +393,18 @@
             <label>Note Sent to Layout Committee / Design & Drawing Dept.</label>
             <textarea id="p3-note" placeholder="Memo reference, issues submitted for clearance..."></textarea>
 
+            <div class="link-container-wrapper gdrive-input-box-area">
+                <label style="color:var(--accent-light);">Attach Layout Blueprints/Drawings (Google Drive Link)</label>
+                <div id="p3-links-list"></div>
+                <button class="btn btn-sm" type="button" onclick="addNewDriveLinkInputRow('p3-links-list')">＋ Attach Drive Link</button>
+            </div>
+
             <button class="btn btn-success" onclick="commitP3Log()">Commit Design Log Row</button>
             <div id="p3-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
 
             <div class="btn-footer-nav">
                 <button class="btn btn-secondary" onclick="switchView('view-wizard-p2')">← Previous</button>
-                <button class="btn" onclick="switchView('view-wizard-p4')">Next →</button>
+                <button class="btn" onclick="switchView('view-wizard-p4')">Next Page (Budget) →</button>
             </div>
         </div>
     </div>
@@ -363,12 +437,18 @@
                 </div>
             </div>
 
+            <div class="link-container-wrapper gdrive-input-box-area">
+                <label style="color:var(--accent-light);">Attach Budget Approvals / Scan Copies (Google Drive)</label>
+                <div id="p4-links-list"></div>
+                <button class="btn btn-sm" type="button" onclick="addNewDriveLinkInputRow('p4-links-list')">＋ Attach Drive Link</button>
+            </div>
+
             <button class="btn btn-success" onclick="commitP4Log()">Commit Budget Log Row</button>
             <div id="p4-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
 
             <div class="btn-footer-nav">
                 <button class="btn btn-secondary" onclick="switchView('view-wizard-p3')">← Previous</button>
-                <button class="btn" onclick="switchView('view-wizard-p5')">Next →</button>
+                <button class="btn" onclick="switchView('view-wizard-p5')">Next Page (Tenders) →</button>
             </div>
         </div>
     </div>
@@ -390,7 +470,7 @@
             <label>Datewise Tender Info with APP Info</label>
             <textarea id="p5-appInfo" placeholder="Annual Procurement Plan line-item connection context..."></textarea>
             
-            <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
                 <div>
                     <label>Approved Date</label>
                     <input type="date" id="p5-appDate">
@@ -405,6 +485,12 @@
                 </div>
             </div>
 
+            <div class="link-container-wrapper gdrive-input-box-area">
+                <label style="color:var(--accent-light);">Attach Tendering Notices / Contractor Bid Forms</label>
+                <div id="p5-links-list"></div>
+                <button class="btn btn-sm" type="button" onclick="addNewDriveLinkInputRow('p5-links-list')">＋ Attach Drive Link</button>
+            </div>
+
             <button class="btn btn-success" onclick="commitP5Log()">Commit Tender Log Row</button>
             <div id="p5-running-table-container" style="margin-top:20px; overflow-x:auto;"></div>
 
@@ -417,7 +503,7 @@
 </div>
 
 <script>
-    let database = JSON.parse(localStorage.getItem('wizard_diary_data')) || [];
+    let database = JSON.parse(localStorage.getItem('wizard_diary_data_gdrive')) || [];
     let currentWorkingProjId = null; 
     let isEditingExistingMode = false;
 
@@ -425,6 +511,44 @@
         renderMasterDatabase();
     };
 
+    // --- DYNAMIC GDRIVE LINK FIELDS GENERATION ENGINE ---
+    function addNewDriveLinkInputRow(containerId, initialValue = "", initialLabel = "") {
+        const container = document.getElementById(containerId);
+        const div = document.createElement('div');
+        div.className = 'gdrive-input-row';
+        div.style.display = 'flex';
+        div.style.gap = '10px';
+        div.style.marginBottom = '8px';
+        div.innerHTML = `
+            <input type="text" class="gdrive-label-field" placeholder="e.g., Blueprint Site Layout Plan" value="${initialLabel}" style="width:35%; margin:0;">
+            <input type="url" class="gdrive-url-field" placeholder="https://drive.google.com/..." value="${initialValue}" style="width:55%; margin:0;">
+            <button class="btn btn-danger btn-sm" type="button" onclick="this.parentElement.remove()" style="width:10%;">&times;</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function collectDriveLinksFromContainer(containerId) {
+        const container = document.getElementById(containerId);
+        const rows = container.querySelectorAll('.gdrive-input-row');
+        let extractedLinks = [];
+        rows.forEach(row => {
+            const label = row.querySelector('.gdrive-label-field').value.trim();
+            const url = row.querySelector('.gdrive-url-field').value.trim();
+            if(url) {
+                extractedLinks.push({ name: label || "Google Drive Document", link: url });
+            }
+        });
+        return extractedLinks;
+    }
+
+    function buildGDriveHtmlBadges(linksArray) {
+        if(!linksArray || linksArray.length === 0) return "";
+        return "<div style='margin-top:4px;'>" + linksArray.map(l => `
+            <a href="${l.link}" target="_blank" class="gdrive-link-badge">📂 ${l.name}</a>
+        `).join(' ') + "</div>";
+    }
+
+    // --- CORE WIZARD OPERATIONS & ENGINE ---
     function switchView(viewId) {
         document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
@@ -452,6 +576,7 @@
         document.getElementById('w-projFy').value = "";
         document.getElementById('w-projName').value = "";
         document.getElementById('w-projDetails').value = "";
+        document.getElementById('p1-links-list').innerHTML = "";
         
         clearPageFormFields();
         switchView('view-wizard-p1');
@@ -462,6 +587,7 @@
         const fy = document.getElementById('w-projFy').value.trim();
         const name = document.getElementById('w-projName').value.trim();
         const details = document.getElementById('w-projDetails').value.trim();
+        const links = collectDriveLinksFromContainer('p1-links-list');
 
         if(!id || !fy || !name) return alert("Error: Fields marked with * are required.");
 
@@ -469,7 +595,7 @@
             if(database.some(p => p.id.toLowerCase() === id.toLowerCase())) {
                 return alert("Primary Key Conflict: This Project ID already exists.");
             }
-            let targetObj = { id, fy, name, details, plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[] };
+            let targetObj = { id, fy, name, details, metaLinks: links, plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[] };
             database.push(targetObj);
             currentWorkingProjId = id;
             isEditingExistingMode = true; 
@@ -479,6 +605,7 @@
                 database[idx].fy = fy;
                 database[idx].name = name;
                 database[idx].details = details;
+                database[idx].metaLinks = links;
             }
         }
         syncMemory();
@@ -489,11 +616,13 @@
         return database.find(p => p.id === currentWorkingProjId);
     }
 
+    // --- SECTION LOG DATA COMMITS ---
     function commitP2Log() {
         const p = getCurrentProjectRef();
         const d = document.getElementById('p2-date').value;
         if(!d) return alert("Select an entry log target date.");
 
+        const links = collectDriveLinksFromContainer('p2-links-list');
         const planText = document.getElementById('p2-plan').value;
         const decText = document.getElementById('p2-decision').value;
         const workText = document.getElementById('p2-work').value;
@@ -501,12 +630,13 @@
         const discText = document.getElementById('p2-solDisc').value;
         const implText = document.getElementById('p2-solImpl').value;
 
-        if(planText) p.plans.push({ id: 'L-'+Date.now(), date: d, text: planText });
-        if(decText || workText) p.decisions.push({ id: 'L-'+Date.now(), date: d, decision: decText, work: workText });
-        if(probText || discText || implText) p.problems.push({ id: 'L-'+Date.now(), date: d, problem: probText, discussed: discText, implemented: implText });
+        if(planText) p.plans.push({ id: 'L-'+Date.now(), date: d, text: planText, attachments: links });
+        if(decText || workText) p.decisions.push({ id: 'L-'+Date.now(), date: d, decision: decText, work: workText, attachments: links });
+        if(probText || discText || implText) p.problems.push({ id: 'L-'+Date.now(), date: d, problem: probText, discussed: discText, implemented: implText, attachments: links });
 
         syncMemory();
         clearPageFormFields();
+        document.getElementById('p2-links-list').innerHTML = "";
         renderSubTablesPage2();
     }
 
@@ -518,11 +648,13 @@
         p.layouts.push({
             id: 'L-'+Date.now(), date: d,
             draft: document.getElementById('p3-draft').value,
-            note: document.getElementById('p3-note').value
+            note: document.getElementById('p3-note').value,
+            attachments: collectDriveLinksFromContainer('p3-links-list')
         });
 
         syncMemory();
         clearPageFormFields();
+        document.getElementById('p3-links-list').innerHTML = "";
         renderSubTablesPage3();
     }
 
@@ -536,11 +668,13 @@
             type: document.getElementById('p4-type').value,
             decision: document.getElementById('p4-decision').value,
             recDate: document.getElementById('p4-recDate').value,
-            amount: document.getElementById('p4-amount').value
+            amount: document.getElementById('p4-amount').value,
+            attachments: collectDriveLinksFromContainer('p4-links-list')
         });
 
         syncMemory();
         clearPageFormFields();
+        document.getElementById('p4-links-list').innerHTML = "";
         renderSubTablesPage4();
     }
 
@@ -555,11 +689,13 @@
             appInfo: document.getElementById('p5-appInfo').value,
             appDate: document.getElementById('p5-appDate').value,
             bidder: document.getElementById('p5-bidder').value,
-            value: document.getElementById('p5-value').value
+            value: document.getElementById('p5-value').value,
+            attachments: collectDriveLinksFromContainer('p5-links-list')
         });
 
         syncMemory();
         clearPageFormFields();
+        document.getElementById('p5-links-list').innerHTML = "";
         renderSubTablesPage5();
     }
 
@@ -572,13 +708,14 @@
         }
     }
 
+    // --- INLINE TABLES RENDERERS ---
     function renderSubTablesPage2() {
         const p = getCurrentProjectRef();
         let html = `<h4>Current Operational Logs:</h4>`;
         html += `<table class="db-table"><tr><th>Type</th><th>Date</th><th>Logged Value</th><th>Action</th></tr>`;
-        p.plans.forEach(r => html += `<tr><td>Plan</td><td>${r.date}</td><td>${r.text}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('plans','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
-        p.decisions.forEach(r => html += `<tr><td>Decision</td><td>${r.date}</td><td><strong>Decision:</strong> ${r.decision}<br><strong>Work:</strong> ${r.work}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('decisions','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
-        p.problems.forEach(r => html += `<tr><td>Problem</td><td>${r.date}</td><td><strong>Problem:</strong> ${r.problem}<br><strong>Solutions:</strong> ${r.discussed || r.implemented}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('problems','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
+        p.plans.forEach(r => html += `<tr><td>Plan</td><td>${r.date}</td><td>${r.text} ${buildGDriveHtmlBadges(r.attachments)}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('plans','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
+        p.decisions.forEach(r => html += `<tr><td>Decision</td><td>${r.date}</td><td><strong>Decision:</strong> ${r.decision}<br><strong>Work:</strong> ${r.work} ${buildGDriveHtmlBadges(r.attachments)}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('decisions','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
+        p.problems.forEach(r => html += `<tr><td>Problem</td><td>${r.date}</td><td><strong>Problem:</strong> ${r.problem}<br><strong>Solutions:</strong> ${r.discussed || r.implemented} ${buildGDriveHtmlBadges(r.attachments)}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('problems','${r.id}','view-wizard-p2')">&times;</button></td></tr>`);
         html += `</table>`;
         document.getElementById('p2-running-table-container').innerHTML = (p.plans.length + p.decisions.length + p.problems.length === 0) ? "" : html;
     }
@@ -586,16 +723,15 @@
     function renderSubTablesPage3() {
         const p = getCurrentProjectRef();
         let html = `<table class="db-table"><tr><th>Date</th><th>Draft Layout</th><th>Note sent</th><th>Action</th></tr>`;
-        p.layouts.forEach(r => html += `<tr><td>${r.date}</td><td>${r.draft}</td><td>${r.note}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('layouts','${r.id}','view-wizard-p3')">&times;</button></td></tr>`);
+        p.layouts.forEach(r => html += `<tr><td>${r.date}</td><td>${r.draft} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.note}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('layouts','${r.id}','view-wizard-p3')">&times;</button></td></tr>`);
         html += `</table>`;
         document.getElementById('p3-running-table-container').innerHTML = p.layouts.length === 0 ? "" : html;
     }
 
-    // Live Sub-tables rendering for Data verification inside wizard forms
     function renderSubTablesPage4() {
         const p = getCurrentProjectRef();
         let html = `<table class="db-table"><tr><th>Date</th><th>Type</th><th>Decision</th><th>Received Date</th><th>Amount</th><th>Action</th></tr>`;
-        p.budgets.forEach(r => html += `<tr><td>${r.date}</td><td>${r.type}</td><td>${r.decision}</td><td>${r.recDate}</td><td>${Number(r.amount).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('budgets','${r.id}','view-wizard-p4')">&times;</button></td></tr>`);
+        p.budgets.forEach(r => html += `<tr><td>${r.date}</td><td>${r.type}</td><td>${r.decision} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.recDate}</td><td>${Number(r.amount).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('budgets','${r.id}','view-wizard-p4')">&times;</button></td></tr>`);
         html += `</table>`;
         document.getElementById('p4-running-table-container').innerHTML = p.budgets.length === 0 ? "" : html;
     }
@@ -603,7 +739,7 @@
     function renderSubTablesPage5() {
         const p = getCurrentProjectRef();
         let html = `<table class="db-table"><tr><th>Date</th><th>Tender ID</th><th>Info / APP</th><th>Approved Date</th><th>Winner</th><th>Value</th><th>Action</th></tr>`;
-        p.tenders.forEach(r => html += `<tr><td>${r.date}</td><td>${r.tenderId}</td><td>${r.appInfo}</td><td>${r.appDate}</td><td>${r.bidder}</td><td>${Number(r.value).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('tenders','${r.id}','view-wizard-p5')">&times;</button></td></tr>`);
+        p.tenders.forEach(r => html += `<tr><td>${r.date}</td><td>${r.tenderId}</td><td>${r.appInfo} ${buildGDriveHtmlBadges(r.attachments)}</td><td>${r.appDate}</td><td>${r.bidder}</td><td>${Number(r.value).toLocaleString()}</td><td><button class="btn btn-sm btn-danger" onclick="removeSubRow('tenders','${r.id}','view-wizard-p5')">&times;</button></td></tr>`);
         html += `</table>`;
         document.getElementById('p5-running-table-container').innerHTML = p.tenders.length === 0 ? "" : html;
     }
@@ -619,6 +755,13 @@
         document.getElementById('w-projName').value = p.name;
         document.getElementById('w-projDetails').value = p.details || '';
 
+        // Hydrate baseline drive links
+        const listContainer = document.getElementById('p1-links-list');
+        listContainer.innerHTML = "";
+        if(p.metaLinks) {
+            p.metaLinks.forEach(l => addNewDriveLinkInputRow('p1-links-list', l.link, l.name));
+        }
+
         switchView('view-wizard-p1');
     }
 
@@ -630,12 +773,82 @@
         }
     }
 
+    // ================= VIEW DEEP-DIVE RECORDS RENDERER =================
+    function showFullDetailsPage(id) {
+        const p = database.find(proj => proj.id === id);
+        if(!p) return;
+
+        document.getElementById('details-page-title').innerText = `Full Details Dossier: [${p.id}]`;
+        
+        let htmlContent = `
+            <div style="background: #edf2f7; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left:4px solid var(--accent);">
+                <p style="margin: 0 0 8px 0;"><strong>Financial Year (FY):</strong> ${p.fy}</p>
+                <p style="margin: 0 0 8px 0;"><strong>Project ID:</strong> ${p.id}</p>
+                <p style="margin: 0 0 8px 0;"><strong>Name of Project:</strong> ${p.name}</p>
+                <p style="margin: 0 0 8px 0;"><strong>Baseline Scope parameters:</strong> ${p.details || 'N/A'}</p>
+                ${p.metaLinks && p.metaLinks.length > 0 ? `<p style="margin:0;"><strong>Master Blueprints Archive:</strong> ${buildGDriveHtmlBadges(p.metaLinks)}</p>` : ''}
+            </div>
+
+            <div class="detail-section-title">1. Datewise Project Execution Plans</div>
+            ${p.plans.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No plan entries recorded.</p>' : `
+                <div class="table-responsive"><table class="db-table">
+                    <thead><tr><th style="width:20%">Date</th><th>Plan Summary Details</th></tr></thead>
+                    <tbody>${p.plans.map(l => `<tr><td><strong>${l.date}</strong></td><td>${l.text} ${buildGDriveHtmlBadges(l.attachments)}</td></tr>`).join('')}</tbody>
+                </table></div>
+            `}
+
+            <div class="detail-section-title">2. Datewise Important Decisions &amp; Executed Sub-tasks</div>
+            ${p.decisions.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No decision logs recorded.</p>' : `
+                <div class="table-responsive"><table class="db-table">
+                    <thead><tr><th style="width:20%">Date</th><th>Important Decisions Reached</th><th>Executed Work Context</th></tr></thead>
+                    <tbody>${p.decisions.map(l => `<tr><td><strong>${l.date}</strong></td><td>${l.decision} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.work || 'N/A'}</td></tr>`).join('')}</tbody>
+                </table></div>
+            `}
+
+            <div class="detail-section-title">3. Datewise Engineering Bottlenecks &amp; Solutions Deployment</div>
+            ${p.problems.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No impediment entries recorded.</p>' : `
+                <div class="table-responsive"><table class="db-table">
+                    <thead><tr><th style="width:20%">Date</th><th>Problems / Obstacles Faced</th><th>Solutions Discussed</th><th>Solutions Implemented</th></tr></thead>
+                    <tbody>${p.problems.map(l => `<tr><td><strong>${l.date}</strong></td><td style="color:var(--danger)">${l.problem} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.discussed || 'N/A'}</td><td style="color:var(--success); font-weight:600;">${l.implemented || 'N/A'}</td></tr>`).join('')}</tbody>
+                </table></div>
+            `}
+
+            <div class="detail-section-title">4. Layout Status Matrix &amp; Committee Tracking</div>
+            ${p.layouts.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No engineering design notes recorded.</p>' : `
+                <div class="table-responsive"><table class="db-table">
+                    <thead><tr><th style="width:20%">Date</th><th>Draft Layout Details</th><th>Notes Sent to Layout Committee / Design</th></tr></thead>
+                    <tbody>${p.layouts.map(l => `<tr><td><strong>${l.date}</strong></td><td>${l.draft} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.note || 'N/A'}</td></tr>`).join('')}</tbody>
+                </table></div>
+            `}
+
+            <div class="detail-section-title">5. Budget Controls Database Matrix</div>
+            ${p.budgets.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No budget entries cataloged.</p>' : `
+                <div class="table-responsive"><table class="db-table">
+                    <thead><tr><th style="width:15%">Log Date</th><th style="width:20%">Budget Type</th><th>Datewise Decisions Log</th><th style="width:15%">Receive Date</th><th style="width:15%">Amount</th></tr></thead>
+                    <tbody>${p.budgets.map(l => `<tr><td><strong>${l.date}</strong></td><td><mark style="background:#feebc8; padding:2px 4px; border-radius:3px;">${l.type || 'N/A'}</mark></td><td>${l.decision} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.recDate || 'N/A'}</td><td style="font-weight:700; color:var(--success); text-align:right;">${l.amount ? Number(l.amount).toLocaleString() : '0'}</td></tr>`).join('')}</tbody>
+                </table></div>
+            `}
+
+            <div class="detail-section-title">6. Tender Procurement Ledger Records</div>
+            ${p.tenders.length === 0 ? '<p style="color:var(--text-muted); padding-left:15px;">No procurement rows detected.</p>' : `
+                <div class="table-responsive"><table class="db-table">
+                    <thead><tr><th style="width:15%">Log Date</th><th style="width:15%">Tender ID</th><th>Datewise Info &amp; APP Scope Details</th><th style="width:15%">Approved Date</th><th>Winning Bidder</th><th style="width:15%">Value</th></tr></thead>
+                    <tbody>${p.tenders.map(l => `<tr><td><strong>${l.date}</strong></td><td><code>${l.tenderId}</code></td><td>${l.appInfo} ${buildGDriveHtmlBadges(l.attachments)}</td><td>${l.appDate || 'N/A'}</td><td><strong>${l.bidder || 'N/A'}</strong></td><td style="font-weight:700; color:var(--warning); text-align:right;">${l.value ? Number(l.value).toLocaleString() : '0'}</td></tr>`).join('')}</tbody>
+                </table></div>
+            `}
+        `;
+
+        document.getElementById('fullDetailsRenderContainer').innerHTML = htmlContent;
+        switchView('view-full-details');
+    }
+
+    // ================= HOMEPAGE YEARWISE MATRIX DISPLAY =================
     function renderMasterDatabase() {
         const out = document.getElementById('masterDbContainer');
         out.innerHTML = "";
 
         if(database.length === 0) {
-            out.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px; font-weight:bold;">No log data rows found.</p>`;
+            out.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:15px; font-weight:bold;">No project data rows found.</p>`;
             return;
         }
 
@@ -654,58 +867,16 @@
                 card.className = 'project-card';
                 card.innerHTML = `
                     <div class="project-summary">
-                        <div>
-                            <strong style="color:var(--accent);">[${p.id}]</strong> — <span style="font-weight:600;">${p.name}</span>
+                        <div class="project-meta-info">
+                            <strong>FY:</strong> ${p.fy} | 
+                            <strong>ID:</strong> <code>${p.id}</code> | 
+                            <strong>Name:</strong> <span style="font-weight:600; margin-left:4px;">${p.name}</span>
                         </div>
                         <div class="btn-group">
+                            <button class="btn btn-sm btn-success" onclick="showFullDetailsPage('${p.id}')">See Full Details</button>
                             <button class="btn btn-sm" onclick="editEntireProjectRoute('${p.id}')">Edit / Add Logs</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteEntireProject('${p.id}')">Delete Project</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteEntireProject('${p.id}')">Delete</button>
                         </div>
-                    </div>
-                    <div class="project-details-area">
-                        <p style="margin-top:0;"><strong>Baseline Scope:</strong> ${p.details || 'N/A'}</p>
-                        
-                        ${p.plans.length === 0 ? '' : `
-                            <h5 style="color:var(--accent-light); margin:5px 0;">1. Execution Plans</h5>
-                            <table class="db-table">
-                                ${p.plans.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td>${l.text}</td></tr>`).join('')}
-                            </table>
-                        `}
-
-                        ${p.decisions.length === 0 ? '' : `
-                            <h5 style="color:var(--accent-light); margin:5px 0;">2. Decisions &amp; Executed Works</h5>
-                            <table class="db-table">
-                                ${p.decisions.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Decision:</strong> ${l.decision}<br><small><strong>Executed:</strong> ${l.work}</small></td></tr>`).join('')}
-                            </table>
-                        `}
-
-                        ${p.problems.length === 0 ? '' : `
-                            <h5 style="color:var(--danger); margin:5px 0;">3. Bottlenecks &amp; Countermeasures</h5>
-                            <table class="db-table">
-                                ${p.problems.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><span style="color:var(--danger)"><strong>Obstacle:</strong> ${l.problem}</span><br><small><strong>Discussed:</strong> ${l.discussed} | <strong>Implemented:</strong> ${l.implemented}</small></td></tr>`).join('')}
-                            </table>
-                        `}
-
-                        ${p.layouts.length === 0 ? '' : `
-                            <h5 style="color:var(--accent-light); margin:5px 0;">4. Layout Status Logs</h5>
-                            <table class="db-table">
-                                ${p.layouts.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Draft:</strong> ${l.draft}<br><small><strong>Layout Committee Note:</strong> ${l.note}</small></td></tr>`).join('')}
-                            </table>
-                        `}
-
-                        ${p.budgets.length === 0 ? '' : `
-                            <h5 style="color:var(--success); margin:5px 0;">5. Budget Framework Ledger</h5>
-                            <table class="db-table">
-                                ${p.budgets.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Type:</strong> ${l.type} | <strong>Decision:</strong> ${l.decision} | <strong>Received:</strong> ${l.recDate} | <strong>Value:</strong> $${Number(l.amount).toLocaleString()}</td></tr>`).join('')}
-                            </table>
-                        `}
-
-                        ${p.tenders.length === 0 ? '' : `
-                            <h5 style="color:var(--warning); margin:5px 0;">6. Tender Ledger Matrix</h5>
-                            <table class="db-table">
-                                ${p.tenders.map(l => `<tr><td style="width:15%"><strong>${l.date}</strong></td><td><strong>Tender ID:</strong> <code>${l.tenderId}</code><br><small><strong>APP Scope Info:</strong> ${l.appInfo} <br> <strong>Approved:</strong> ${l.appDate} | <strong>Awardee:</strong> ${l.bidder} | <strong>Value:</strong> $${Number(l.value).toLocaleString()}</small></td></tr>`).join('')}
-                            </table>
-                        `}
                     </div>
                 `;
                 section.appendChild(card);
@@ -714,16 +885,105 @@
         });
     }
 
+    // ================= MIGRATION ENGINE: CSV EXPORT & IMPORT =================
+    function exportDataToCSV() {
+        if(database.length === 0) return alert("No data to export.");
+        
+        let csvRows = [];
+        // Header mapping baseline schema
+        csvRows.push("RecordType,ProjectID,FY,ProjectName,Details,Date,Field1,Field2,Field3,Field4");
+
+        database.forEach(p => {
+            // Meta entry row context
+            csvRows.push(`METADATA,"${p.id}","${p.fy}","${p.name.replace(/"/g, '""')}","${(p.details || '').replace(/"/g, '""')}",,,,`);
+            
+            if(p.metaLinks) p.metaLinks.forEach(l => csvRows.push(`GDRIVE_META,"${p.id}",,,,"${l.name}","${l.link}",,,`));
+            p.plans.forEach(l => csvRows.push(`PLAN,"${p.id}",,,,"${l.date}","${l.text.replace(/"/g, '""')}",,,`));
+            p.decisions.forEach(l => csvRows.push(`DECISION,"${p.id}",,,,"${l.date}","${l.decision.replace(/"/g, '""')}","${l.work.replace(/"/g, '""')}",,`));
+            p.problems.forEach(l => csvRows.push(`PROBLEM,"${p.id}",,,,"${l.date}","${l.problem.replace(/"/g, '""')}","${l.discussed.replace(/"/g, '""')}","${l.implemented.replace(/"/g, '""')}",`));
+            p.layouts.forEach(l => csvRows.push(`LAYOUT,"${p.id}",,,,"${l.date}","${l.draft.replace(/"/g, '""')}","${l.note.replace(/"/g, '""')}",,`));
+            p.budgets.forEach(l => csvRows.push(`BUDGET,"${p.id}",,,,"${l.date}","${l.type}","${l.decision.replace(/"/g, '""')}","${l.recDate}","${l.amount}"`));
+            p.tenders.forEach(l => csvRows.push(`TENDER,"${p.id}",,,,"${l.date}","${l.tenderId}","${l.appInfo.replace(/"/g, '""')}","${l.appDate}","${l.value}"`));
+        });
+
+        const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Project_Diary_Backup_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function importDataFromCSV(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const lines = text.split("\n");
+            
+            let importedDatabase = [];
+
+            for(let i = 1; i < lines.length; i++) {
+                if(!lines[i].trim()) continue;
+                
+                // Light split parser logic handling simple tokens
+                let parts = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(x => x.replace(/^"|"$/g, '').trim());
+                if(parts.length < 2) continue;
+
+                const type = parts[0];
+                const pId = parts[1];
+
+                if(type === "METADATA") {
+                    importedDatabase.push({
+                        id: pId, fy: parts[2], name: parts[3], details: parts[4],
+                        metaLinks:[], plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[]
+                    });
+                    continue;
+                }
+
+                let p = importedDatabase.find(proj => proj.id === pId);
+                if(!p) {
+                    // Fallback create context if sequence was skewed
+                    p = { id: pId, fy: "Unknown", name: "Imported Data Project", details: "", metaLinks:[], plans:[], decisions:[], problems:[], layouts:[], budgets:[], tenders:[] };
+                    importedDatabase.push(p);
+                }
+
+                if(type === "GDRIVE_META") p.metaLinks.push({ name: parts[5], link: parts[6] });
+                else if(type === "PLAN") p.plans.push({ id: 'L-'+Date.now()+i, date: parts[5], text: parts[6] });
+                else if(type === "DECISION") p.decisions.push({ id: 'L-'+Date.now()+i, date: parts[5], decision: parts[6], work: parts[7] });
+                else if(type === "PROBLEM") p.problems.push({ id: 'L-'+Date.now()+i, date: parts[5], problem: parts[6], discussed: parts[7], implemented: parts[8] });
+                else if(type === "LAYOUT") p.layouts.push({ id: 'L-'+Date.now()+i, date: parts[5], draft: parts[6], note: parts[7] });
+                else if(type === "BUBGET") p.budgets.push({ id: 'L-'+Date.now()+i, date: parts[5], type: parts[6], decision: parts[7], recDate: parts[8], amount: parts[9] });
+                else if(type === "TENDER") p.tenders.push({ id: 'L-'+Date.now()+i, date: parts[5], tenderId: parts[6], appInfo: parts[7], appDate: parts[8], bidder: "", value: parts[9] });
+            }
+
+            if(importedDatabase.length > 0) {
+                if(confirm(`Successfully parsed ${importedDatabase.length} projects. Do you want to overwrite your active app database?`)) {
+                    database = importedDatabase;
+                    syncMemory();
+                    renderMasterDatabase();
+                }
+            } else {
+                alert("Invalid file format mapping schema detected.");
+            }
+        };
+        reader.readAsText(file);
+    }
+
     function clearPageFormFields() {
         document.querySelectorAll('.app-view input, .app-view textarea').forEach(el => {
-            if(el.id !== 'w-projId' && el.id !== 'w-projFy' && el.id !== 'w-projName' && el.id !== 'w-projDetails') {
+            if(!el.id.startsWith('w-proj') && !el.classList.contains('gdrive-label-field') && !el.classList.contains('gdrive-url-field')) {
                 el.value = "";
             }
         });
     }
 
     function syncMemory() {
-        localStorage.setItem('wizard_diary_data', JSON.stringify(database));
+        localStorage.setItem('wizard_diary_data_gdrive', JSON.stringify(database));
     }
 </script>
 </body>
